@@ -1,0 +1,13 @@
+[buy_triggers]
+min_liquidity_sol = 5.0
+max_buy_sol = 0.1
+slippage_tolerance = 0.05
+
+[sell_triggers]
+profit_threshold = 2.0
+loss_threshold = -0.5
+max_hold_time_minutes = 60
+
+[risk_management]
+max_position_size_sol = 1.0
+max_daily_trades = 50

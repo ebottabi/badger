@@ -1,0 +1,43 @@
+[package]
+name = "badger"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "badger"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-appender = { workspace = true }
+
+# Service crates
+badger-core = { path = "crates/badger-core" }
+badger-transport = { path = "crates/badger-transport" }
+badger-ingest = { path = "crates/badger-ingest" }
+badger-stalker = { path = "crates/badger-stalker" }
+badger-scout = { path = "crates/badger-scout" }
+badger-strike = { path = "crates/badger-strike" }
+
+[workspace]
+members = [
+    "crates/badger-core",
+    "crates/badger-transport", 
+    "crates/badger-ingest",
+    "crates/badger-stalker",
+    "crates/badger-scout",
+    "crates/badger-strike",
+]
+
+[workspace.dependencies]
+tokio = { version = "1.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+thiserror = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-appender = "0.2"

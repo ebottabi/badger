@@ -1,0 +1,11 @@
+[network]
+rpc_url = "https://api.mainnet-beta.solana.com"
+websocket_url = "wss://api.mainnet-beta.solana.com"
+
+[dex]
+raydium_program_id = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8"
+orca_program_id = "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc"
+
+[performance]
+max_concurrent_requests = 100
+timeout_ms = 5000

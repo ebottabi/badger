@@ -1,0 +1,16 @@
+{
+  "tracked_wallets": [
+    {
+      "address": "example_wallet_address_1",
+      "label": "Insider Wallet 1",
+      "tier": "high",
+      "min_sol_amount": 1.0
+    },
+    {
+      "address": "example_wallet_address_2", 
+      "label": "Insider Wallet 2",
+      "tier": "medium",
+      "min_sol_amount": 0.5
+    }
+  ]
+}

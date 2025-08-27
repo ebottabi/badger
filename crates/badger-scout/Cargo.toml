@@ -1,0 +1,13 @@
+[package]
+name = "badger-scout"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+badger-core = { path = "../badger-core" }
+badger-transport = { path = "../badger-transport" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }

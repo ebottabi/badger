@@ -1,0 +1,37 @@
+[logging]
+# Default log level - can be overridden by RUST_LOG environment variable
+level = "info"
+
+# Console logging configuration
+[logging.console]
+enabled = true
+format = "compact"  # compact, pretty, json
+show_target = true
+show_thread_ids = true
+show_level = true
+
+# File logging configuration
+[logging.file]
+enabled = true
+format = "json"  # json, compact, pretty
+directory = "logs"
+filename_prefix = "badger"
+rotation = "daily"  # daily, hourly, never
+
+# Specific module log levels
+[logging.modules]
+# Core components
+"badger" = "info"
+"badger_core" = "info"
+"badger_transport" = "debug"
+
+# Services
+"badger_ingest" = "info"
+"badger_stalker" = "info"
+"badger_scout" = "info"
+"badger_strike" = "info"
+
+# External crates (reduce noise)
+"tokio" = "warn"
+"tracing" = "warn"
+"hyper" = "warn"
