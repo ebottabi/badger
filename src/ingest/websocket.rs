@@ -408,6 +408,68 @@ impl SolanaWebSocketClient {
             error!("❌ Failed to serialize Jupiter program subscription request");
         }
         
+        // Subscribe to Orca Whirlpool program
+        let orca_request = JsonRpcRequest {
+            jsonrpc: "2.0".to_string(),
+            id: 995,
+            method: "programSubscribe".to_string(),
+            params: serde_json::json!([
+                "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
+                {"commitment": "confirmed", "encoding": "jsonParsed", "filters": []}
+            ]),
+        };
+        
+        if let Ok(orca_msg) = serde_json::to_string(&orca_request) {
+            match tx.send(Message::Text(orca_msg)) {
+                Ok(_) => info!("📡 Sent Orca Whirlpool program subscription request"),
+                Err(e) => error!("❌ Failed to send Orca program subscription: {}", e),
+            }
+        } else {
+            error!("❌ Failed to serialize Orca program subscription request");
+        }
+        
+        // Subscribe to SPL Token program for new token mints
+        let spl_request = JsonRpcRequest {
+            jsonrpc: "2.0".to_string(),
+            id: 994,
+            method: "programSubscribe".to_string(),
+            params: serde_json::json!([
+                "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+                {"commitment": "confirmed", "encoding": "jsonParsed", "filters": [
+                    {"dataSize": 82} // Filter for mint accounts only
+                ]}
+            ]),
+        };
+        
+        if let Ok(spl_msg) = serde_json::to_string(&spl_request) {
+            match tx.send(Message::Text(spl_msg)) {
+                Ok(_) => info!("📡 Sent SPL Token program subscription request"),
+                Err(e) => error!("❌ Failed to send SPL Token program subscription: {}", e),
+            }
+        } else {
+            error!("❌ Failed to serialize SPL Token program subscription request");
+        }
+        
+        // Subscribe to Pump.fun program for meme coin launches
+        let pump_request = JsonRpcRequest {
+            jsonrpc: "2.0".to_string(),
+            id: 993,
+            method: "programSubscribe".to_string(),
+            params: serde_json::json!([
+                "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+                {"commitment": "confirmed", "encoding": "jsonParsed", "filters": []}
+            ]),
+        };
+        
+        if let Ok(pump_msg) = serde_json::to_string(&pump_request) {
+            match tx.send(Message::Text(pump_msg)) {
+                Ok(_) => info!("📡 Sent Pump.fun program subscription request"),
+                Err(e) => error!("❌ Failed to send Pump.fun program subscription: {}", e),
+            }
+        } else {
+            error!("❌ Failed to serialize Pump.fun program subscription request");
+        }
+        
         // Spawn task to handle outgoing messages
         let tx_task = {
             let event_sender = self.event_sender.clone();

@@ -85,7 +85,7 @@ pub struct SwapEvent {
     pub timestamp: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub enum SwapType {
     Buy,   // SOL/USDC -> Token
     Sell,  // Token -> SOL/USDC
@@ -164,7 +164,7 @@ pub enum TradingSignal {
     },
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub enum SignalSource {
     NewPool,
     InsiderWallet,
