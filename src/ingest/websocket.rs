@@ -512,11 +512,11 @@ impl SolanaWebSocketClient {
                                 stats.last_message_time = Some(Instant::now());
                             }
                             
-                            debug!("Received WebSocket message: {}", text);
+                           // debug!("Received WebSocket message: {}", text);
                             
                             // Print all non-ping/pong messages to see what's actually coming through
                             if !text.is_empty() && text != "pong" {
-                                println!("🔗 RAW WEBSOCKET MESSAGE: {}", text);
+                               //println!("🔗 RAW WEBSOCKET MESSAGE: {}", text);
                             }
                             
                             // Parse and handle JSON-RPC message
@@ -530,11 +530,11 @@ impl SolanaWebSocketClient {
                             break;
                         }
                         Ok(Message::Ping(_data)) => {
-                            debug!("Received ping, sending pong");
+                            //debug!("Received ping, sending pong");
                             // WebSocket will automatically handle pong response
                         }
                         Ok(Message::Pong(_)) => {
-                            debug!("Received pong");
+                            //debug!("Received pong");
                         }
                         Ok(Message::Binary(data)) => {
                             warn!("Received unexpected binary message: {} bytes", data.len());

@@ -12,7 +12,7 @@ use badger::ingest::DexEventParser;
 use badger::core::{MarketEvent, TradingSignal, DexType};
 use badger::transport::{
     EnhancedTransportBus, ServiceRegistry, ServiceInfo, ServiceType, ServiceCapability, 
-    ServiceStatus, SubscriptionInfo, EventType
+    ServiceStatus, SubscriptionInfo, EventType, WalletEvent, SystemAlert
 };
 
 use chrono::Utc;
@@ -220,6 +220,7 @@ struct BadgerOrchestrator {
     websocket_config: WebSocketConfig,
     transport_bus: Arc<EnhancedTransportBus>,
     service_registry: Arc<ServiceRegistry>,
+    database_manager: Option<badger::DatabaseManager>,
 }
 
 impl BadgerOrchestrator {
@@ -250,9 +251,47 @@ impl BadgerOrchestrator {
             websocket_config,
             transport_bus,
             service_registry,
+            database_manager: None,
         }
     }
 
+    /// Initialize the database services (Phase 3)
+    async fn initialize_database_services(&mut self) -> Result<()> {
+        info!("🗄️ Initializing Phase 3 Database Services");
+        
+        // Initialize database manager (directory creation handled in database layer)
+        let mut database_manager = badger::DatabaseManager::new();
+        
+        // Initialize with transport bus and service registry
+        if let Err(e) = database_manager.initialize(
+            self.transport_bus.clone(),
+            self.service_registry.clone(),
+        ).await {
+            error!("Failed to initialize database manager: {}", e);
+            return Err(anyhow::anyhow!("Database initialization failed: {}", e));
+        }
+        
+        // Start all database services
+        let db_handles = database_manager.start_all_services().await
+            .map_err(|e| anyhow::anyhow!("Failed to start database services: {}", e))?;
+        
+        // Convert database service handles to our handle type
+        for handle in db_handles {
+            let converted_handle = tokio::spawn(async move {
+                match handle.await {
+                    Ok(Ok(())) => Ok(()),
+                    Ok(Err(e)) => Err(anyhow::anyhow!("Database service error: {}", e)),
+                    Err(e) => Err(anyhow::anyhow!("Database service join error: {}", e)),
+                }
+            });
+            self.tasks.push(converted_handle);
+        }
+        
+        self.database_manager = Some(database_manager);
+        
+        info!("✅ Phase 3 Database Services initialized successfully");
+        Ok(())
+    }
 
     /// Starts the core WebSocket ingestion service with enhanced transport integration
     /// 
@@ -284,7 +323,6 @@ impl BadgerOrchestrator {
         
         let mut shutdown_rx = self.shutdown_tx.subscribe();
         let config = self.websocket_config.clone();
-        let transport_bus = self.transport_bus.clone();
         let service_registry = self.service_registry.clone();
         
         let ingestion_task = tokio::spawn(async move {
@@ -294,6 +332,20 @@ impl BadgerOrchestrator {
             let (client, mut event_rx) = match SolanaWebSocketClient::new(config) {
                 Ok((client, rx)) => {
                     info!("✅ WebSocket client initialized successfully");
+                    
+                    // Send a system startup alert through transport bus
+                    if let Err(e) = service_registry.route_system_alert(
+                        badger::transport::SystemAlert::ServiceStartup {
+                            service: "Solana WebSocket Ingestion".to_string(),
+                            version: "1.0.0".to_string(),
+                        },
+                        Some("ingestion-service-001")
+                    ).await {
+                        warn!("Failed to send startup alert: {}", e);
+                    } else {
+                        println!("📤 Sent service startup alert to transport bus");
+                    }
+                    
                     (client, rx)
                 }
                 Err(e) => {
@@ -338,7 +390,18 @@ impl BadgerOrchestrator {
                             }
                             WebSocketEvent::SubscriptionConfirmed { subscription_id, request_id } => {
                                 info!("✅ Subscription confirmed: {} (request: {})", subscription_id, request_id);
-                                println!("🎯 SUBSCRIPTION CONFIRMED: request_id={}, subscription_id={}", request_id, subscription_id);
+                                let sub_type = match request_id {
+                                    999 => "Slot Updates",
+                                    998 => "USDC Account", 
+                                    997 => "Raydium Program",
+                                    996 => "Jupiter Program",
+                                    995 => "Orca Program", 
+                                    994 => "SPL Token Program",
+                                    993 => "Pump.fun Program",
+                                    _ => "Unknown"
+                                };
+                                println!("🎯 SUBSCRIPTION CONFIRMED: {} (sub: {}, req: {})", sub_type, subscription_id, request_id);
+                                println!("   📡 This subscription will send program account updates for DEX analysis");
                             }
                             WebSocketEvent::AccountUpdate { subscription_id, data } => {
                                 parse_and_display_account_update(subscription_id, &data);
@@ -348,19 +411,45 @@ impl BadgerOrchestrator {
                                     serde_json::to_string_pretty(&data).unwrap_or_else(|_| format!("{:?}", data)));
                             }
                             WebSocketEvent::ProgramAccountUpdate { subscription_id, data } => {
+                                println!("🔍 PROGRAM UPDATE [sub: {}] - analyzing for DEX events", subscription_id);
+                                
+                                // Show some context about the update
+                                if let Some(context) = data.get("context") {
+                                    if let Some(slot) = context.get("slot") {
+                                        println!("   📍 Slot: {}", slot);
+                                    }
+                                }
+                                if let Some(value) = data.get("value") {
+                                    if let Some(pubkey) = value.get("pubkey") {
+                                        println!("   🔑 Account: {}", pubkey.as_str().unwrap_or("unknown")[..std::cmp::min(16, pubkey.as_str().unwrap_or("").len())].to_string() + "...");
+                                    }
+                                    if let Some(account) = value.get("account") {
+                                        if let Some(owner) = account.get("owner") {
+                                            println!("   👤 Owner: {}", owner.as_str().unwrap_or("unknown"));
+                                        }
+                                    }
+                                }
+                                
                                 // Parse DEX events and route through transport layer
                                 match DexEventParser::parse_program_update(subscription_id, &data) {
                                     Ok(market_events) => {
+                                        if market_events.is_empty() {
+                                            println!("   ⚪ No market events parsed from this update (normal - most updates aren't DEX events)");
+                                        } else {
+                                            println!("   ✅ Parsed {} market events - routing through transport bus", market_events.len());
+                                        }
+                                        
                                         for market_event in market_events {
                                             // Display the event (for Phase 1 compatibility)
                                             display_market_event(&market_event);
                                             
                                             // Route through transport layer (Phase 2 enhancement)
-                                            if let Err(e) = service_registry.route_market_event(
+                                            match service_registry.route_market_event(
                                                 market_event.clone(), 
                                                 Some("ingestion-service-001")
                                             ).await {
-                                                warn!("Failed to route market event: {}", e);
+                                                Ok(_) => println!("   📤 MarketEvent routed to transport bus successfully"),
+                                                Err(e) => warn!("Failed to route market event: {}", e),
                                             }
                                             
                                             // Generate and route trading signals
@@ -368,19 +457,29 @@ impl BadgerOrchestrator {
                                                 display_trading_signal(&signal);
                                                 
                                                 // Route signal through transport layer
-                                                if let Err(e) = service_registry.route_trading_signal(
+                                                match service_registry.route_trading_signal(
                                                     signal,
                                                     Some("ingestion-service-001")
                                                 ).await {
-                                                    warn!("Failed to route trading signal: {}", e);
+                                                    Ok(_) => println!("   📤 TradingSignal routed to transport bus successfully"),
+                                                    Err(e) => warn!("Failed to route trading signal: {}", e),
                                                 }
                                             }
                                         }
                                     }
                                     Err(e) => {
-                                        debug!("Failed to parse program update: {}", e);
-                                        // Keep the fallback display for debugging
-                                        parse_and_display_program_update(subscription_id, &data);
+                                        println!("   ❌ DEX Parser failed: {} (this is normal for non-DEX account updates)", e);
+                                        // Show basic account info for debugging
+                                        if let Some(value) = data.get("value") {
+                                            if let Some(account) = value.get("account") {
+                                                if let Some(owner) = account.get("owner").and_then(|o| o.as_str()) {
+                                                    let dex_type = badger::core::DexType::from_program_id(owner);
+                                                    if dex_type != badger::core::DexType::Unknown {
+                                                        println!("   🤔 This was a {:?} program update but parsing failed - might need parser improvement", dex_type);
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -402,8 +501,10 @@ impl BadgerOrchestrator {
                     
                     // Handle shutdown signal
                     _ = shutdown_rx.recv() => {
-                        info!("🛑 Ingestion service received shutdown signal");
-                        client_handle.as_mut().unwrap().abort();
+                        info!("🛑 Ingestion service received shutdown signal - aborting immediately");
+                        if let Some(handle) = client_handle.as_mut() {
+                            handle.abort();
+                        }
                         break;
                     }
                     
@@ -471,20 +572,101 @@ impl BadgerOrchestrator {
             }
             
             info!("📊 Transport Monitor active - listening for events");
+            println!("🎧 TRANSPORT MONITOR: Ready to receive events on all channels");
             
             loop {
                 tokio::select! {
                     Ok(market_event) = market_events.recv() => {
-                        debug!("📈 Transport Monitor received MarketEvent: {:?}", std::mem::discriminant(&market_event));
+                        println!("📈 TRANSPORT BUS - MarketEvent received:");
+                        info!("📈 TRANSPORT BUS - MarketEvent received:");
+                        match &market_event {
+                            MarketEvent::PoolCreated { pool, creator, initial_liquidity_sol } => {
+                                println!("  🔥 Pool Created: {} | DEX: {:?} | Creator: {}...{} | Liquidity: {:.3} SOL", 
+                                    &pool.address[..8], pool.dex, &creator[..4], &creator[creator.len()-4..], initial_liquidity_sol);
+                            }
+                            MarketEvent::TokenLaunched { token } => {
+                                println!("  🪙 Token Launched: {} | Symbol: {} | Supply: {}", 
+                                    &token.mint[..8], token.symbol, token.supply);
+                                println!("      Mint Auth: {} | Freeze Auth: {}", 
+                                    token.mint_authority.as_ref().map(|s| &s[..8]).unwrap_or("None"),
+                                    token.freeze_authority.as_ref().map(|s| &s[..8]).unwrap_or("None"));
+                            }
+                            MarketEvent::SwapDetected { swap } => {
+                                println!("  💱 Swap: {} | {} -> {} | Wallet: {}...{} | DEX: {:?}", 
+                                    &swap.signature[..8], &swap.token_in[..8], &swap.token_out[..8], 
+                                    &swap.wallet[..4], &swap.wallet[swap.wallet.len()-4..], swap.dex);
+                            }
+                            MarketEvent::LargeTransferDetected { transfer } => {
+                                println!("  💸 Large Transfer: {} | Token: {} | Amount: {} | USD: ${:.2}", 
+                                    &transfer.signature[..8], &transfer.token_mint[..8], 
+                                    transfer.amount, transfer.amount_usd.unwrap_or(0.0));
+                            }
+                            _ => {
+                                println!("  📊 Other MarketEvent: {:?}", std::mem::discriminant(&market_event));
+                            }
+                        }
                     }
                     Ok(trading_signal) = trading_signals.recv() => {
-                        debug!("🎯 Transport Monitor received TradingSignal: {:?}", std::mem::discriminant(&trading_signal));
+                        println!("🎯 TRANSPORT BUS - TradingSignal received:");
+                        info!("🎯 TRANSPORT BUS - TradingSignal received:");
+                        match &trading_signal {
+                            TradingSignal::Buy { token_mint, confidence, max_amount_sol, reason, source } => {
+                                println!("  🟢 BUY SIGNAL: Token: {} | Confidence: {:.1}% | Max: {:.3} SOL", 
+                                    &token_mint[..8], confidence * 100.0, max_amount_sol);
+                                println!("      Reason: {} | Source: {:?}", reason, source);
+                            }
+                            TradingSignal::Sell { token_mint, price_target, stop_loss, reason } => {
+                                println!("  🔴 SELL SIGNAL: Token: {} | Target: {:.6} | Stop: {:.6}", 
+                                    &token_mint[..8], price_target, stop_loss);
+                                println!("      Reason: {}", reason);
+                            }
+                            TradingSignal::SwapActivity { token_mint, volume_increase, whale_activity } => {
+                                println!("  📈 SWAP ACTIVITY: Token: {} | Volume +{:.1}% | Whale: {}", 
+                                    &token_mint[..8], volume_increase * 100.0, whale_activity);
+                            }
+                        }
                     }
                     Ok(wallet_event) = wallet_events.recv() => {
-                        debug!("👛 Transport Monitor received WalletEvent: {:?}", std::mem::discriminant(&wallet_event));
+                        println!("👛 TRANSPORT BUS - WalletEvent received:");
+                        info!("👛 TRANSPORT BUS - WalletEvent received:");
+                        match &wallet_event {
+                            WalletEvent::InsiderActivity { wallet, action, token_mint, amount_sol, confidence, .. } => {
+                                println!("  🕵️ Insider Activity: Wallet: {}...{} | Action: {:?}", 
+                                    &wallet[..4], &wallet[wallet.len()-4..], action);
+                                println!("      Token: {} | Amount: {:.3} SOL | Confidence: {:.1}%", 
+                                    &token_mint[..8], amount_sol, confidence * 100.0);
+                            }
+                            WalletEvent::NewInsiderDetected { wallet, success_rate, total_trades, .. } => {
+                                println!("  🎯 New Insider: {}...{} | Success: {:.1}% | Trades: {}", 
+                                    &wallet[..4], &wallet[wallet.len()-4..], success_rate * 100.0, total_trades);
+                            }
+                            _ => {
+                                println!("  👛 Other WalletEvent: {:?}", std::mem::discriminant(&wallet_event));
+                            }
+                        }
                     }
                     Ok(system_alert) = system_alerts.recv() => {
-                        debug!("🚨 Transport Monitor received SystemAlert: {:?}", std::mem::discriminant(&system_alert));
+                        println!("🚨 TRANSPORT BUS - SystemAlert received:");
+                        info!("🚨 TRANSPORT BUS - SystemAlert received:");
+                        match &system_alert {
+                            SystemAlert::ServiceStartup { service, version } => {
+                                println!("  🟢 Service Started: {} v{}", service, version);
+                            }
+                            SystemAlert::ServiceShutdown { service, reason, uptime_seconds } => {
+                                println!("  🔴 Service Stopped: {} | Reason: {} | Uptime: {}s", 
+                                    service, reason, uptime_seconds);
+                            }
+                            SystemAlert::ConnectionIssue { service, error, .. } => {
+                                println!("  ⚠️ Connection Issue: {} | Error: {}", service, error);
+                            }
+                            SystemAlert::HighTrafficDetected { events_per_minute, threshold, service } => {
+                                println!("  🔥 High Traffic: {} | {}/min (threshold: {})", 
+                                    service, events_per_minute, threshold);
+                            }
+                            _ => {
+                                println!("  🚨 Other SystemAlert: {:?}", std::mem::discriminant(&system_alert));
+                            }
+                        }
                     }
                     _ = shutdown_rx.recv() => {
                         info!("🛑 Transport Monitor received shutdown signal");
@@ -539,23 +721,68 @@ impl BadgerOrchestrator {
 
     /// Starts all configured services
     async fn start_all_services(&mut self) -> Result<()> {
-        info!("🚀 Starting all Badger services with Enhanced Transport Layer");
+        info!("🚀 Starting all Badger services with Enhanced Transport Layer + Phase 3 Database");
         
         // Start transport monitoring first to capture all events
         self.start_transport_monitoring_service().await?;
         
+        // Initialize Phase 3 database services
+        self.initialize_database_services().await?;
+        
         // Start ingestion service
         self.start_ingestion_service().await?;
         
-        // Display transport bus statistics
+        // Display transport bus statistics and start periodic monitoring
         let stats = self.transport_bus.get_statistics().await;
-        info!("📊 Transport Bus Statistics:");
+        info!("📊 Initial Transport Bus Statistics:");
         info!("  - Market Event Subscribers: {}", stats.market_subscribers);
         info!("  - Trading Signal Subscribers: {}", stats.signal_subscribers);  
         info!("  - Wallet Event Subscribers: {}", stats.wallet_subscribers);
         info!("  - System Alert Subscribers: {}", stats.alert_subscribers);
         
+        // Start periodic transport statistics reporting
+        let transport_stats_bus = self.transport_bus.clone();
+        let stats_task = tokio::spawn(async move {
+            let mut interval = tokio::time::interval(Duration::from_secs(30));
+            loop {
+                interval.tick().await;
+                let stats = transport_stats_bus.get_statistics().await;
+                
+                if stats.market_events_sent > 0 || stats.trading_signals_sent > 0 || 
+                   stats.wallet_events_sent > 0 || stats.system_alerts_sent > 0 {
+                    println!("\n📈 TRANSPORT BUS ACTIVITY (Last 30s):");
+                    println!("  🔥 Market Events: {} sent | {} subscribers", 
+                        stats.market_events_sent, stats.market_subscribers);
+                    println!("  🎯 Trading Signals: {} sent | {} subscribers", 
+                        stats.trading_signals_sent, stats.signal_subscribers);
+                    println!("  👛 Wallet Events: {} sent | {} subscribers", 
+                        stats.wallet_events_sent, stats.wallet_subscribers);
+                    println!("  🚨 System Alerts: {} sent | {} subscribers", 
+                        stats.system_alerts_sent, stats.alert_subscribers);
+                }
+            }
+        });
+        
+        self.tasks.push(stats_task);
+        
         info!("✅ All {} services started successfully", self.tasks.len());
+        
+        println!("\n🔍 PHASE 3: ENHANCED DATA PERSISTENCE & ANALYTICS");
+        println!("   📊 Listening for real-time Solana DEX activity");
+        println!("   🗄️ Database Services Active:");
+        println!("      • PersistenceService - Storing all events");
+        println!("      • AnalyticsService - Real-time performance tracking");
+        println!("      • WalletTrackerService - Insider scoring system");
+        println!("      • QueryService - High-performance data queries");
+        println!("   🎯 Market events will appear when DEX transactions occur:");
+        println!("      • New Raydium AMM pools created");
+        println!("      • Jupiter aggregator swaps executed"); 
+        println!("      • Orca Whirlpool activity detected");
+        println!("      • New tokens launched on Pump.fun");
+        println!("      • Large SPL token transfers");
+        println!("   ⏳ Note: Real DEX events may be infrequent - this is normal");
+        println!("   📈 Analytics and database stats will update periodically\n");
+        
         Ok(())
     }
 
@@ -567,16 +794,15 @@ impl BadgerOrchestrator {
         let _ = self.shutdown_tx.send(());
         debug!("Shutdown signal broadcasted to all services");
         
-        // Wait for all tasks to complete with timeout
-        let shutdown_timeout = Duration::from_secs(30);
+        // Wait for all tasks to complete with shorter timeout for faster shutdown
+        let shutdown_timeout = Duration::from_secs(5);
         let mut results = Vec::new();
         
         for (i, task) in self.tasks.drain(..).enumerate() {
             match tokio::time::timeout(shutdown_timeout, task).await {
                 Ok(result) => results.push((i, result)),
                 Err(_timeout_error) => {
-                    warn!("⏰ Service {} shutdown timed out after {:?}", i + 1, shutdown_timeout);
-                    // Create a proper JoinError by aborting the task
+                    warn!("⏰ Service {} shutdown timed out after {:?} - was force terminated", i + 1, shutdown_timeout);
                     results.push((i, Ok(Err(anyhow::anyhow!("Service shutdown timeout")))));
                 }
             }
@@ -653,17 +879,21 @@ async fn async_main() -> Result<()> {
     // Initialize comprehensive logging
     init_tracing()?;
     
-    info!("🦡 Badger Trading Bot - Phase 1 Production DEX Ingestion");
-    info!("=========================================================");
-    info!("Version: 0.1.0-phase1");
-    info!("Phase 1 Features:");
+    info!("🦡 Badger Trading Bot - Phase 3 Data Persistence & Analytics");
+    info!("==============================================================");
+    info!("Version: 0.3.0-phase3");
+    info!("Phase 3 Features:");
     info!("  🔥 Real-time Raydium AMM pool monitoring");
     info!("  ⚡ Jupiter V6 aggregator event tracking");
     info!("  🌊 Orca Whirlpool program monitoring");
     info!("  🪙 SPL Token new mint detection");
     info!("  🚀 Pump.fun meme coin launch tracking");
-    info!("  🎯 Basic trading signal generation");
-    info!("Performance: Zero-delay event processing with production DEX parsers");
+    info!("  🎯 Advanced trading signal generation");
+    info!("  🗄️ Persistent event storage and analytics");
+    info!("  📊 Real-time performance tracking");
+    info!("  🕵️ Wallet intelligence and insider scoring");
+    info!("  🔍 High-performance data queries");
+    info!("Performance: Zero-delay processing + comprehensive data persistence");
 
     let mut orchestrator = BadgerOrchestrator::new();
     
@@ -684,7 +914,8 @@ async fn async_main() -> Result<()> {
     // Wait for shutdown signal (Ctrl+C)
     match signal::ctrl_c().await {
         Ok(()) => {
-            info!("🛑 Shutdown signal received (Ctrl+C)");
+            info!("🛑 Shutdown signal received (Ctrl+C) - initiating immediate shutdown");
+            println!("🛑 Shutting down Badger...");
         }
         Err(e) => {
             error!("❌ Failed to listen for shutdown signal: {}", e);

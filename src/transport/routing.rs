@@ -52,6 +52,10 @@ pub enum ServiceType {
     Strike,
     /// Database and analytics service (Phase 6)
     Database,
+    /// Storage service (Phase 3)
+    Storage,
+    /// Analytics service (Phase 3)
+    Analytics,
     /// External service (Jupiter, price feeds, etc.)
     External,
     /// Utility service (logging, monitoring, etc.)
@@ -75,6 +79,10 @@ pub enum ServiceCapability {
     TokenAnalyzer,
     /// Can track wallets
     WalletTracker,
+    /// Can produce wallet events
+    WalletEventProducer,
+    /// Can consume wallet events
+    WalletEventConsumer,
     /// Can detect risks
     RiskDetector,
     /// Can provide price data

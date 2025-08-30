@@ -138,6 +138,68 @@ pub enum MarketEvent {
     },
 }
 
+impl MarketEvent {
+    /// Generate unique event ID for database storage
+    pub fn get_event_id(&self) -> String {
+        match self {
+            MarketEvent::PoolCreated { pool, .. } => {
+                format!("pool_created_{}", pool.address)
+            },
+            MarketEvent::PoolBurned { pool_address, burn_tx } => {
+                format!("pool_burned_{}_{}", pool_address, &burn_tx[..8])
+            },
+            MarketEvent::TokenLaunched { token } => {
+                format!("token_launched_{}", token.mint)
+            },
+            MarketEvent::LiquidityChanged { pool_address, .. } => {
+                format!("liquidity_changed_{}_{}", pool_address, chrono::Utc::now().timestamp_nanos())
+            },
+            MarketEvent::SwapDetected { swap } => {
+                format!("swap_{}", swap.signature)
+            },
+            MarketEvent::LargeTransferDetected { transfer } => {
+                format!("transfer_{}", transfer.signature)
+            },
+        }
+    }
+
+    /// Get event type string for database storage
+    pub fn get_event_type(&self) -> String {
+        match self {
+            MarketEvent::PoolCreated { .. } => "pool_created".to_string(),
+            MarketEvent::PoolBurned { .. } => "pool_burned".to_string(),
+            MarketEvent::TokenLaunched { .. } => "token_launched".to_string(),
+            MarketEvent::LiquidityChanged { .. } => "liquidity_changed".to_string(),
+            MarketEvent::SwapDetected { .. } => "swap_detected".to_string(),
+            MarketEvent::LargeTransferDetected { .. } => "large_transfer".to_string(),
+        }
+    }
+
+    /// Get timestamp for database storage
+    pub fn get_timestamp(&self) -> i64 {
+        match self {
+            MarketEvent::PoolCreated { pool, .. } => pool.created_at.timestamp(),
+            MarketEvent::PoolBurned { .. } => chrono::Utc::now().timestamp(),
+            MarketEvent::TokenLaunched { token } => token.created_at.timestamp(),
+            MarketEvent::LiquidityChanged { .. } => chrono::Utc::now().timestamp(),
+            MarketEvent::SwapDetected { swap } => swap.timestamp.timestamp(),
+            MarketEvent::LargeTransferDetected { transfer } => transfer.timestamp.timestamp(),
+        }
+    }
+
+    /// Get slot number if available
+    pub fn get_slot(&self) -> Option<i64> {
+        match self {
+            MarketEvent::PoolCreated { pool, .. } => Some(pool.slot as i64),
+            MarketEvent::PoolBurned { .. } => None,
+            MarketEvent::TokenLaunched { token } => Some(token.slot as i64),
+            MarketEvent::LiquidityChanged { .. } => None,
+            MarketEvent::SwapDetected { swap } => Some(swap.slot as i64),
+            MarketEvent::LargeTransferDetected { transfer } => Some(transfer.slot as i64),
+        }
+    }
+}
+
 /// Trading signals that can be generated from market events
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum TradingSignal {
@@ -162,6 +224,55 @@ pub enum TradingSignal {
         volume_increase: f64,
         whale_activity: bool,
     },
+}
+
+impl TradingSignal {
+    /// Get unique signal ID for database storage
+    pub fn get_signal_id(&self) -> String {
+        match self {
+            TradingSignal::Buy { token_mint, .. } => {
+                format!("buy_{}_{}", token_mint, chrono::Utc::now().timestamp_nanos())
+            },
+            TradingSignal::Sell { token_mint, .. } => {
+                format!("sell_{}_{}", token_mint, chrono::Utc::now().timestamp_nanos())
+            },
+            TradingSignal::SwapActivity { token_mint, .. } => {
+                format!("swap_{}_{}", token_mint, chrono::Utc::now().timestamp_nanos())
+            },
+        }
+    }
+
+    /// Get signal type for database storage
+    pub fn get_signal_type(&self) -> String {
+        match self {
+            TradingSignal::Buy { .. } => "buy".to_string(),
+            TradingSignal::Sell { .. } => "sell".to_string(),
+            TradingSignal::SwapActivity { .. } => "swap_activity".to_string(),
+        }
+    }
+
+    /// Get timestamp for database storage
+    pub fn get_timestamp(&self) -> i64 {
+        chrono::Utc::now().timestamp()
+    }
+
+    /// Get confidence score
+    pub fn get_confidence(&self) -> f64 {
+        match self {
+            TradingSignal::Buy { confidence, .. } => *confidence,
+            TradingSignal::Sell { .. } => 0.8, // Default confidence for sell signals
+            TradingSignal::SwapActivity { .. } => 0.6, // Default confidence for activity signals
+        }
+    }
+
+    /// Get token mint
+    pub fn get_token_mint(&self) -> String {
+        match self {
+            TradingSignal::Buy { token_mint, .. } => token_mint.clone(),
+            TradingSignal::Sell { token_mint, .. } => token_mint.clone(),
+            TradingSignal::SwapActivity { token_mint, .. } => token_mint.clone(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
