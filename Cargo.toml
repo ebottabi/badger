@@ -8,36 +8,47 @@ name = "badger"
 path = "src/main.rs"
 
 [dependencies]
-tokio = { workspace = true }
-anyhow = { workspace = true }
-tracing = { workspace = true }
-tracing-subscriber = { workspace = true }
-tracing-appender = { workspace = true }
-
-# Service crates
-badger-core = { path = "crates/badger-core" }
-badger-transport = { path = "crates/badger-transport" }
-badger-ingest = { path = "crates/badger-ingest" }
-badger-stalker = { path = "crates/badger-stalker" }
-badger-scout = { path = "crates/badger-scout" }
-badger-strike = { path = "crates/badger-strike" }
-
-[workspace]
-members = [
-    "crates/badger-core",
-    "crates/badger-transport", 
-    "crates/badger-ingest",
-    "crates/badger-stalker",
-    "crates/badger-scout",
-    "crates/badger-strike",
-]
-
-[workspace.dependencies]
+# Core runtime and utilities
 tokio = { version = "1.0", features = ["full"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
 anyhow = "1.0"
 thiserror = "1.0"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Logging
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 tracing-appender = "0.2"
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# WebSocket and HTTP
+tokio-tungstenite = { version = "0.21", features = ["native-tls"] }
+futures-util = "0.3"
+url = "2.5"
+base64 = "0.21"
+reqwest = { version = "0.11", features = ["json"] }
+
+# Solana SDK (using compatible versions with anchor-client)
+solana-sdk = "1.16"
+solana-client = "1.16"
+solana-program = "1.16"
+solana-account-decoder = "1.16"
+solana-transaction-status = "1.16"
+spl-token = "3.5"
+
+# Concurrency
+dashmap = "5.5"
+
+# Anchor for advanced Solana operations
+anchor-client = "0.28"
+
+# Additional Solana parsing
+bs58 = "0.5"
+borsh = "0.10"
+
+# DEX integration dependencies
+bincode = "1.3"
