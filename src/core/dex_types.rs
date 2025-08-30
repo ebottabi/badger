@@ -273,6 +273,15 @@ impl TradingSignal {
             TradingSignal::SwapActivity { token_mint, .. } => token_mint.clone(),
         }
     }
+
+    /// Get signal source
+    pub fn get_source(&self) -> SignalSource {
+        match self {
+            TradingSignal::Buy { source, .. } => *source,
+            TradingSignal::Sell { .. } => SignalSource::NewPool, // Default source for sell signals
+            TradingSignal::SwapActivity { .. } => SignalSource::VolumeSpike, // Default source for activity signals
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]

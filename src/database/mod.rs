@@ -12,12 +12,14 @@ pub mod services;
 pub mod batch;
 pub mod validation;
 pub mod cleanup;
+pub mod analytics;
 
 pub use models::*;
 pub use services::*;
 pub use batch::*;
 pub use validation::*;
 pub use cleanup::*;
+pub use analytics::*;
 
 /// Enhanced database manager for Milestone 2 with real-time persistence
 pub struct DatabaseManager {
@@ -141,6 +143,16 @@ impl DatabaseManager {
         info!("   🕵️ Wallet Tracker: Active");
         
         Ok(handles)
+    }
+
+    /// Get database reference for analytics components
+    pub fn get_database(&self) -> Arc<BadgerDatabase> {
+        // Get database from query service if available, otherwise create a new connection
+        if let Some(query_service) = &self.query_service {
+            query_service.get_database()
+        } else {
+            panic!("Database not initialized - call initialize() first")
+        }
     }
 }
 

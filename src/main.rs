@@ -14,6 +14,9 @@ use badger::transport::{
     EnhancedTransportBus, ServiceRegistry, ServiceInfo, ServiceType, ServiceCapability, 
     ServiceStatus, SubscriptionInfo, EventType, WalletEvent, SystemAlert
 };
+use badger::database::analytics::{
+    PositionTracker, PnLCalculator, PerformanceTracker, InsiderAnalytics
+};
 
 use chrono::Utc;
 use std::collections::HashMap;
@@ -208,6 +211,240 @@ fn display_trading_signal(signal: &TradingSignal) {
     }
 }
 
+/// Process market event for insider analytics tracking (Phase 3: Task 3.1)
+async fn process_market_event_for_insider_analytics(
+    event: &MarketEvent,
+    insider_analytics: &Arc<InsiderAnalytics>,
+) {
+    match event {
+        MarketEvent::SwapDetected { swap } => {
+            // Track insider wallet activity from swaps
+            let activity_type = match swap.swap_type {
+                badger::core::SwapType::Buy => "BUY",
+                badger::core::SwapType::Sell => "SELL",
+            };
+            
+            if let Err(e) = insider_analytics.track_insider_activity(
+                &swap.wallet,
+                &swap.token_out, // For buys, token_out is what they're buying
+                activity_type,
+                swap.amount_out as f64,
+                swap.price_impact,
+                Some(&swap.signature),
+                Some(swap.slot as i64),
+            ).await {
+                warn!("Failed to track insider activity for swap: {}", e);
+            } else {
+                debug!("📊 Tracked insider activity: {} {} {}", swap.wallet, activity_type, swap.token_out);
+            }
+        }
+        MarketEvent::LargeTransferDetected { transfer } => {
+            // Track large transfers as potential insider activity
+            if let Err(e) = insider_analytics.track_insider_activity(
+                &transfer.from_wallet,
+                &transfer.token_mint,
+                "TRANSFER",
+                transfer.amount as f64,
+                None, // No price for transfers
+                None, // No transaction hash available in this structure
+                Some(transfer.slot as i64),
+            ).await {
+                warn!("Failed to track insider activity for large transfer: {}", e);
+            } else {
+                debug!("📊 Tracked insider large transfer: {} -> {}", transfer.from_wallet, transfer.to_wallet);
+            }
+        }
+        _ => {
+            // Other market events don't directly indicate insider activity
+        }
+    }
+}
+
+/// Process trading signal for position tracking and P&L calculation (Phase 3: Task 3.1)
+async fn process_trading_signal_for_analytics(
+    signal: &TradingSignal,
+    position_tracker: &Arc<PositionTracker>,
+    pnl_calculator: &Arc<PnLCalculator>,
+) {
+    match signal {
+        TradingSignal::Buy { token_mint, confidence, max_amount_sol, .. } => {
+            // For demonstration, we're simulating opening a position
+            // In a real implementation, this would be triggered by actual trade execution
+            
+            let entry_price = 0.000001; // Simulated entry price - would come from actual trade
+            let quantity = max_amount_sol / entry_price;
+            let fees = max_amount_sol * 0.005; // 0.5% fee simulation
+            
+            // Check if this might be an insider signal by looking for wallet patterns
+            let insider_wallet = extract_potential_insider_wallet(signal);
+            
+            match position_tracker.open_position(
+                signal,
+                entry_price,
+                quantity,
+                fees,
+                insider_wallet,
+            ).await {
+                Ok(position) => {
+                    info!("📊 Position opened for analytics tracking: #{} ({})", position.id, token_mint);
+                    
+                    // Update P&L calculator with current price
+                    pnl_calculator.update_price(token_mint, entry_price).await;
+                }
+                Err(e) => {
+                    warn!("Failed to open position for analytics: {}", e);
+                }
+            }
+        }
+        TradingSignal::Sell { token_mint, price_target, .. } => {
+            // Simulate closing a position
+            let exit_price = *price_target;
+            let exit_fees = exit_price * 0.005; // 0.5% fee simulation
+            
+            match position_tracker.close_position(token_mint, exit_price, exit_fees).await {
+                Ok(Some(closed_position)) => {
+                    info!("📊 Position closed for analytics: #{} P&L: ${:.4}", 
+                          closed_position.id, closed_position.pnl.unwrap_or(0.0));
+                }
+                Ok(None) => {
+                    debug!("No open position found to close for token: {}", token_mint);
+                }
+                Err(e) => {
+                    warn!("Failed to close position for analytics: {}", e);
+                }
+            }
+        }
+        _ => {
+            // Other signal types don't directly map to position changes
+        }
+    }
+}
+
+/// Extract potential insider wallet from trading signal context
+fn extract_potential_insider_wallet(signal: &TradingSignal) -> Option<String> {
+    // This is a placeholder - in a real implementation, you would extract
+    // the wallet address from the signal context or source data
+    match signal.get_source() {
+        badger::core::SignalSource::InsiderWallet => {
+            // Extract wallet from signal metadata or context
+            Some("insider_wallet_placeholder".to_string())
+        }
+        _ => None,
+    }
+}
+
+/// Generate real-time trading report (Phase 3: Task 3.1)
+async fn generate_real_time_report(
+    position_tracker: &Arc<PositionTracker>,
+    pnl_calculator: &Arc<PnLCalculator>,
+    insider_analytics: &Arc<InsiderAnalytics>,
+) -> Result<()> {
+    println!("\n═══════════════════════════════════════════════════════");
+    println!("📊 BADGER BOT REAL-TIME ANALYTICS REPORT");
+    println!("═══════════════════════════════════════════════════════");
+    
+    // Get position summary
+    match position_tracker.get_position_summary().await {
+        Ok(summary) => {
+            println!("📈 POSITION SUMMARY:");
+            println!("   Total Positions: {} | Open: {} | Closed: {}", 
+                summary.total_positions, summary.open_positions, summary.closed_positions);
+            println!("   Total P&L: ${:.4} | Total Fees: ${:.4}", summary.total_pnl, summary.total_fees);
+            println!("   Win Rate: {:.1}% | Avg Hold Time: {:.1}h", 
+                summary.win_rate * 100.0, summary.average_hold_time / 3600.0);
+            if let Some(best) = summary.best_trade {
+                println!("   Best Trade: ${:.4} | Worst Trade: ${:.4}", 
+                    best, summary.worst_trade.unwrap_or(0.0));
+            }
+        }
+        Err(e) => warn!("Failed to get position summary: {}", e),
+    }
+    
+    // Get portfolio P&L
+    match pnl_calculator.calculate_portfolio_pnl().await {
+        Ok(portfolio) => {
+            println!("💰 PORTFOLIO P&L:");
+            println!("   Realized P&L: ${:.4} | Unrealized P&L: ${:.4}", 
+                portfolio.total_realized_pnl, portfolio.total_unrealized_pnl);
+            println!("   Net P&L: ${:.4} | Portfolio ROI: {:.2}%", 
+                portfolio.net_pnl, portfolio.portfolio_roi);
+            println!("   Profit Factor: {:.2} | Sharpe Ratio: {:.2}", 
+                portfolio.profit_factor, portfolio.sharpe_ratio.unwrap_or(0.0));
+            if portfolio.max_drawdown > 0.0 {
+                println!("   Max Drawdown: {:.2}%", portfolio.max_drawdown);
+            }
+        }
+        Err(e) => warn!("Failed to calculate portfolio P&L: {}", e),
+    }
+    
+    // Get top insiders
+    match insider_analytics.get_top_insiders(5).await {
+        Ok(top_insiders) => {
+            if !top_insiders.is_empty() {
+                println!("🕵️ TOP INSIDER WALLETS:");
+                for (i, insider) in top_insiders.iter().take(3).enumerate() {
+                    println!("   {}. {} | Score: {:.1} | Success: {:.1}% | ROI: {:.1}%",
+                        i + 1,
+                        &insider.wallet_address[..8],
+                        insider.copy_worthiness,
+                        insider.success_rate * 100.0,
+                        insider.roi_percentage
+                    );
+                }
+            } else {
+                println!("🕵️ TOP INSIDER WALLETS: No insider activity detected yet");
+            }
+        }
+        Err(e) => warn!("Failed to get top insiders: {}", e),
+    }
+
+    println!("═══════════════════════════════════════════════════════\n");
+    Ok(())
+}
+
+/// Generate performance report (Phase 3: Task 3.1)
+async fn generate_performance_report(
+    performance_tracker: &Arc<PerformanceTracker>,
+    pnl_calculator: &Arc<PnLCalculator>,
+) -> Result<()> {
+    let now = chrono::Utc::now().timestamp();
+    let hour_ago = now - 3600; // Last hour
+    
+    // Calculate hourly performance
+    match performance_tracker.calculate_performance(hour_ago, now).await {
+        Ok(metrics) => {
+            if metrics.total_trades > 0 {
+                println!("\n🎯 HOURLY PERFORMANCE METRICS:");
+                println!("   Trades: {} | Win Rate: {:.1}% | Total Return: ${:.4}", 
+                    metrics.total_trades, metrics.win_rate * 100.0, metrics.total_return);
+                println!("   Avg Win: ${:.4} | Avg Loss: ${:.4} | Profit Factor: {:.2}", 
+                    metrics.average_win, metrics.average_loss, metrics.profit_factor);
+                if let Some(sharpe) = metrics.sharpe_ratio {
+                    println!("   Sharpe Ratio: {:.2} | Max Drawdown: {:.2}%", sharpe, metrics.max_drawdown);
+                }
+                
+                // Save performance snapshot
+                if let Err(e) = performance_tracker.save_performance_snapshot(&metrics, "HOURLY").await {
+                    warn!("Failed to save performance snapshot: {}", e);
+                }
+            }
+        }
+        Err(e) => warn!("Failed to calculate hourly performance: {}", e),
+    }
+
+    // Save P&L snapshot
+    match pnl_calculator.calculate_portfolio_pnl().await {
+        Ok(portfolio_pnl) => {
+            if let Err(e) = pnl_calculator.save_pnl_snapshot(&portfolio_pnl, "HOURLY").await {
+                warn!("Failed to save P&L snapshot: {}", e);
+            }
+        }
+        Err(e) => warn!("Failed to calculate portfolio P&L for snapshot: {}", e),
+    }
+
+    Ok(())
+}
+
 /// Production-ready Badger trading bot orchestrator
 /// 
 /// This orchestrator manages the core WebSocket ingestion system for real-time
@@ -221,6 +458,11 @@ struct BadgerOrchestrator {
     transport_bus: Arc<EnhancedTransportBus>,
     service_registry: Arc<ServiceRegistry>,
     database_manager: Option<badger::DatabaseManager>,
+    // Analytics components
+    position_tracker: Option<Arc<PositionTracker>>,
+    pnl_calculator: Option<Arc<PnLCalculator>>,
+    performance_tracker: Option<Arc<PerformanceTracker>>,
+    insider_analytics: Option<Arc<InsiderAnalytics>>,
 }
 
 impl BadgerOrchestrator {
@@ -252,6 +494,11 @@ impl BadgerOrchestrator {
             transport_bus,
             service_registry,
             database_manager: None,
+            // Initialize analytics components as None - will be set up later
+            position_tracker: None,
+            pnl_calculator: None,
+            performance_tracker: None,
+            insider_analytics: None,
         }
     }
 
@@ -290,6 +537,133 @@ impl BadgerOrchestrator {
         self.database_manager = Some(database_manager);
         
         info!("✅ Phase 3 Database Services initialized successfully");
+        
+        // Initialize analytics components after database is ready
+        self.initialize_analytics().await?;
+        
+        Ok(())
+    }
+
+    /// Initialize analytics components (Task 3.1: Real-time Metrics Calculation)
+    async fn initialize_analytics(&mut self) -> Result<()> {
+        info!("🔧 Initializing analytics components for real-time metrics");
+        
+        let db_manager = self.database_manager.as_ref()
+            .ok_or_else(|| anyhow::anyhow!("Database manager not initialized"))?;
+        let db = db_manager.get_database();
+
+        // Initialize position tracker
+        let position_tracker = Arc::new(PositionTracker::new(db.clone()));
+        position_tracker.initialize_schema().await
+            .map_err(|e| anyhow::anyhow!("Failed to initialize position tracker schema: {}", e))?;
+
+        // Initialize P&L calculator
+        let pnl_calculator = Arc::new(PnLCalculator::new(db.clone(), position_tracker.clone()));
+        pnl_calculator.initialize_schema().await
+            .map_err(|e| anyhow::anyhow!("Failed to initialize P&L calculator schema: {}", e))?;
+
+        // Initialize performance tracker
+        let performance_tracker = Arc::new(PerformanceTracker::new(
+            db.clone(), 
+            position_tracker.clone(),
+            pnl_calculator.clone()
+        ));
+        performance_tracker.initialize_schema().await
+            .map_err(|e| anyhow::anyhow!("Failed to initialize performance tracker schema: {}", e))?;
+
+        // Initialize insider analytics
+        let insider_analytics = Arc::new(InsiderAnalytics::new(db.clone(), position_tracker.clone()));
+        insider_analytics.initialize_schema().await
+            .map_err(|e| anyhow::anyhow!("Failed to initialize insider analytics schema: {}", e))?;
+
+        // Store references
+        self.position_tracker = Some(position_tracker);
+        self.pnl_calculator = Some(pnl_calculator);
+        self.performance_tracker = Some(performance_tracker);
+        self.insider_analytics = Some(insider_analytics);
+
+        info!("✅ Analytics components initialized successfully");
+        info!("   📊 Position Tracker: Ready for real-time position tracking");
+        info!("   💰 P&L Calculator: Ready for real-time profit/loss calculation");
+        info!("   📈 Performance Tracker: Ready for bot performance metrics");
+        info!("   🕵️ Insider Analytics: Ready for wallet intelligence tracking");
+        
+        Ok(())
+    }
+
+    /// Start real-time analytics reporting service (Phase 3: Task 3.1)
+    async fn start_analytics_reporting_service(&mut self) -> Result<()> {
+        info!("📊 Starting real-time analytics reporting service");
+
+        let position_tracker = self.position_tracker.clone()
+            .ok_or_else(|| anyhow::anyhow!("Position tracker not initialized"))?;
+        let pnl_calculator = self.pnl_calculator.clone()
+            .ok_or_else(|| anyhow::anyhow!("P&L calculator not initialized"))?;
+        let performance_tracker = self.performance_tracker.clone()
+            .ok_or_else(|| anyhow::anyhow!("Performance tracker not initialized"))?;
+        let insider_analytics = self.insider_analytics.clone()
+            .ok_or_else(|| anyhow::anyhow!("Insider analytics not initialized"))?;
+
+        let mut shutdown_rx = self.shutdown_tx.subscribe();
+
+        let reporting_task = tokio::spawn(async move {
+            let mut reporting_interval = tokio::time::interval(Duration::from_secs(60)); // Report every minute
+            let mut performance_interval = tokio::time::interval(Duration::from_secs(300)); // Performance every 5 minutes
+            
+            // Start a trading session
+            let session_id = match performance_tracker.start_trading_session().await {
+                Ok(id) => {
+                    info!("🚀 Started trading session: {}", id);
+                    id
+                }
+                Err(e) => {
+                    error!("Failed to start trading session: {}", e);
+                    return Err(anyhow::anyhow!("Failed to start trading session: {}", e));
+                }
+            };
+
+            loop {
+                tokio::select! {
+                    // Real-time reporting every minute
+                    _ = reporting_interval.tick() => {
+                        if let Err(e) = generate_real_time_report(
+                            &position_tracker,
+                            &pnl_calculator, 
+                            &insider_analytics
+                        ).await {
+                            warn!("Failed to generate real-time report: {}", e);
+                        }
+                    }
+
+                    // Performance metrics every 5 minutes
+                    _ = performance_interval.tick() => {
+                        if let Err(e) = generate_performance_report(
+                            &performance_tracker,
+                            &pnl_calculator
+                        ).await {
+                            warn!("Failed to generate performance report: {}", e);
+                        }
+                    }
+
+                    // Handle shutdown
+                    _ = shutdown_rx.recv() => {
+                        info!("🛑 Analytics reporting service received shutdown signal");
+                        
+                        // End the trading session
+                        if let Err(e) = performance_tracker.end_trading_session().await {
+                            warn!("Failed to end trading session cleanly: {}", e);
+                        }
+                        
+                        break;
+                    }
+                }
+            }
+
+            Ok(())
+        });
+
+        self.tasks.push(reporting_task);
+        info!("✅ Analytics reporting service started successfully");
         Ok(())
     }
 
@@ -324,6 +698,12 @@ impl BadgerOrchestrator {
         let mut shutdown_rx = self.shutdown_tx.subscribe();
         let config = self.websocket_config.clone();
         let service_registry = self.service_registry.clone();
+        
+        // Clone analytics components for the ingestion task
+        let position_tracker = self.position_tracker.clone();
+        let pnl_calculator = self.pnl_calculator.clone(); 
+        let performance_tracker = self.performance_tracker.clone();
+        let insider_analytics = self.insider_analytics.clone();
         
         let ingestion_task = tokio::spawn(async move {
             info!("🚀 Badger Ingest - Real-time Solana Data Processing");
@@ -452,17 +832,27 @@ impl BadgerOrchestrator {
                                                 Err(e) => warn!("Failed to route market event: {}", e),
                                             }
                                             
+                                            // Process with insider analytics (Phase 3: Task 3.1)
+                                            if let Some(insider_analytics) = &insider_analytics {
+                                                process_market_event_for_insider_analytics(&market_event, insider_analytics).await;
+                                            }
+                                            
                                             // Generate and route trading signals
                                             if let Some(signal) = generate_basic_trading_signal(&market_event) {
                                                 display_trading_signal(&signal);
                                                 
                                                 // Route signal through transport layer
                                                 match service_registry.route_trading_signal(
-                                                    signal,
+                                                    signal.clone(),
                                                     Some("ingestion-service-001")
                                                 ).await {
                                                     Ok(_) => println!("   📤 TradingSignal routed to transport bus successfully"),
                                                     Err(e) => warn!("Failed to route trading signal: {}", e),
+                                                }
+                                                
+                                                // Process signal with analytics (Phase 3: Task 3.1)
+                                                if let (Some(position_tracker), Some(pnl_calc)) = (&position_tracker, &pnl_calculator) {
+                                                    process_trading_signal_for_analytics(&signal, position_tracker, pnl_calc).await;
                                                 }
                                             }
                                         }
@@ -731,6 +1121,9 @@ impl BadgerOrchestrator {
         
         // Start ingestion service
         self.start_ingestion_service().await?;
+        
+        // Start analytics reporting service (Phase 3: Task 3.1)
+        self.start_analytics_reporting_service().await?;
         
         // Display transport bus statistics and start periodic monitoring
         let stats = self.transport_bus.get_statistics().await;

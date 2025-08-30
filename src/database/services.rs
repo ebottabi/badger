@@ -391,6 +391,11 @@ impl QueryService {
         Ok(Self { db })
     }
 
+    /// Get database reference for analytics components
+    pub fn get_database(&self) -> Arc<BadgerDatabase> {
+        self.db.clone()
+    }
+
     pub async fn get_session_summary(&self) -> Result<super::models::SessionStats, super::DatabaseError> {
         self.db.get_session_stats().await
     }
