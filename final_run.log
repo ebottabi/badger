@@ -1,0 +1,985 @@
+   Compiling badger v0.1.0 (/Users/ebot/personal/badger)
+warning: unused import: `anyhow::Result`
+ --> src/core/dex_types.rs:1:5
+  |
+1 | use anyhow::Result;
+  |     ^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `solana_sdk::pubkey::Pubkey`
+ --> src/core/dex_types.rs:4:5
+  |
+4 | use solana_sdk::pubkey::Pubkey;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `Path`
+  --> src/core/wallet_management.rs:13:17
+   |
+13 | use std::path::{Path, PathBuf};
+   |                 ^^^^
+
+warning: unused import: `error`
+  --> src/core/wallet_management.rs:14:27
+   |
+14 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused import: `warn`
+ --> src/ingest/dex_parsers.rs:4:22
+  |
+4 | use tracing::{debug, warn};
+  |                      ^^^^
+
+warning: unused import: `error`
+ --> src/transport/enhanced_bus.rs:3:28
+  |
+3 | use tracing::{debug, warn, error, instrument};
+  |                            ^^^^^
+
+warning: unused import: `error`
+ --> src/transport/routing.rs:5:28
+  |
+5 | use tracing::{debug, warn, error, instrument};
+  |                            ^^^^^
+
+warning: unused import: `EnhancedTradingSignal`
+  --> src/transport/routing.rs:10:72
+   |
+10 | use crate::transport::{EnhancedTransportBus, WalletEvent, SystemAlert, EnhancedTradingSignal};
+   |                                                                        ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::VecDeque`
+ --> src/database/mod.rs:1:5
+  |
+1 | use std::collections::VecDeque;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `Duration` and `Instant`
+ --> src/database/mod.rs:3:17
+  |
+3 | use std::time::{Duration, Instant};
+  |                 ^^^^^^^^  ^^^^^^^
+
+warning: unused imports: `Mutex` and `broadcast`
+ --> src/database/mod.rs:4:19
+  |
+4 | use tokio::sync::{broadcast, Mutex};
+  |                   ^^^^^^^^^  ^^^^^
+
+warning: unused imports: `debug`, `instrument`, and `warn`
+ --> src/database/mod.rs:5:21
+  |
+5 | use tracing::{info, warn, error, debug, instrument};
+  |                     ^^^^         ^^^^^  ^^^^^^^^^^
+
+warning: unused imports: `MarketEvent` and `TradingSignal`
+ --> src/database/mod.rs:7:19
+  |
+7 | use crate::core::{MarketEvent, TradingSignal};
+  |                   ^^^^^^^^^^^  ^^^^^^^^^^^^^
+
+warning: unused imports: `SystemAlert` and `WalletEvent`
+ --> src/database/mod.rs:8:63
+  |
+8 | use crate::transport::{EnhancedTransportBus, ServiceRegistry, WalletEvent, SystemAlert};
+  |                                                               ^^^^^^^^^^^  ^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/database/models.rs:3:5
+  |
+3 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `DateTime`
+ --> src/database/models.rs:5:14
+  |
+5 | use chrono::{DateTime, Utc};
+  |              ^^^^^^^^
+
+warning: unused import: `Instant`
+ --> src/database/services.rs:2:27
+  |
+2 | use std::time::{Duration, Instant};
+  |                           ^^^^^^^
+
+warning: unused import: `tokio::sync::broadcast`
+ --> src/database/services.rs:3:5
+  |
+3 | use tokio::sync::broadcast;
+  |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+ --> src/database/services.rs:4:27
+  |
+4 | use tracing::{info, warn, error, debug, instrument};
+  |                           ^^^^^
+
+warning: unused imports: `SystemAlert` and `WalletEvent`
+ --> src/database/services.rs:7:63
+  |
+7 | use crate::transport::{EnhancedTransportBus, ServiceRegistry, WalletEvent, SystemAlert};
+  |                                                               ^^^^^^^^^^^  ^^^^^^^^^^^
+
+warning: unused import: `AnalyticsData`
+  --> src/database/services.rs:10:37
+   |
+10 | use super::models::{BadgerDatabase, AnalyticsData, WalletScore};
+   |                                     ^^^^^^^^^^^^^
+
+warning: unused import: `warn`
+ --> src/database/batch.rs:7:28
+  |
+7 | use tracing::{debug, info, warn, error, instrument};
+  |                            ^^^^
+
+warning: unused import: `warn`
+ --> src/database/validation.rs:4:22
+  |
+4 | use tracing::{debug, warn, error};
+  |                      ^^^^
+
+warning: unused import: `Path`
+ --> src/database/cleanup.rs:1:17
+  |
+1 | use std::path::{Path, PathBuf};
+  |                 ^^^^
+
+warning: unused import: `DateTime`
+ --> src/database/analytics/position_tracker.rs:3:14
+  |
+3 | use chrono::{DateTime, Utc};
+  |              ^^^^^^^^
+
+warning: unused imports: `debug` and `error`
+ --> src/database/analytics/position_tracker.rs:6:15
+  |
+6 | use tracing::{debug, info, warn, error, instrument};
+  |               ^^^^^              ^^^^^
+
+warning: unused import: `MarketEvent`
+ --> src/database/analytics/position_tracker.rs:8:19
+  |
+8 | use crate::core::{MarketEvent, TradingSignal};
+  |                   ^^^^^^^^^^^
+
+warning: unused import: `DateTime`
+ --> src/database/analytics/pnl_calculator.rs:3:14
+  |
+3 | use chrono::{DateTime, Utc};
+  |              ^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+ --> src/database/analytics/pnl_calculator.rs:6:28
+  |
+6 | use tracing::{debug, info, warn, error, instrument};
+  |                            ^^^^  ^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/database/analytics/performance_tracker.rs:1:5
+  |
+1 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `DateTime` and `Duration`
+ --> src/database/analytics/performance_tracker.rs:3:14
+  |
+3 | use chrono::{DateTime, Utc, Duration};
+  |              ^^^^^^^^       ^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+ --> src/database/analytics/performance_tracker.rs:6:28
+  |
+6 | use tracing::{debug, info, warn, error, instrument};
+  |                            ^^^^  ^^^^^
+
+warning: unused import: `PortfolioPnL`
+ --> src/database/analytics/performance_tracker.rs:9:44
+  |
+9 | use super::pnl_calculator::{PnLCalculator, PortfolioPnL};
+  |                                            ^^^^^^^^^^^^
+
+warning: unused import: `DateTime`
+ --> src/database/analytics/insider_analytics.rs:3:14
+  |
+3 | use chrono::{DateTime, Utc};
+  |              ^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+ --> src/database/analytics/insider_analytics.rs:6:28
+  |
+6 | use tracing::{debug, info, warn, error, instrument};
+  |                            ^^^^  ^^^^^
+
+warning: unused imports: `MarketEvent` and `TradingSignal`
+  --> src/database/analytics/insider_analytics.rs:10:19
+   |
+10 | use crate::core::{MarketEvent, TradingSignal};
+   |                   ^^^^^^^^^^^  ^^^^^^^^^^^^^
+
+warning: unexpected `cfg` condition value: `reset-db`
+   --> src/database/migrations.rs:362:11
+    |
+362 |     #[cfg(feature = "reset-db")]
+    |           ^^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `reset-db` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unused import: `std::collections::HashMap`
+  --> src/intelligence/insider_detector.rs:10:5
+   |
+10 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+  --> src/intelligence/insider_detector.rs:13:28
+   |
+13 | use tracing::{info, debug, warn, error, instrument};
+   |                            ^^^^  ^^^^^
+
+warning: unused imports: `error` and `warn`
+  --> src/intelligence/performance_tracker.rs:15:28
+   |
+15 | use tracing::{info, debug, warn, error, instrument};
+   |                            ^^^^  ^^^^^
+
+warning: unused import: `std::sync::atomic::AtomicU64`
+ --> src/intelligence/types.rs:3:5
+  |
+3 | use std::sync::atomic::AtomicU64;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `DateTime` and `Utc`
+ --> src/intelligence/types.rs:4:14
+  |
+4 | use chrono::{DateTime, Utc};
+  |              ^^^^^^^^  ^^^
+
+warning: unused import: `File`
+ --> src/intelligence/mmap_db.rs:8:15
+  |
+8 | use std::fs::{File, OpenOptions};
+  |               ^^^^
+
+warning: unused import: `xxhash_rust::xxh64::xxh64`
+  --> src/intelligence/mmap_db.rs:10:5
+   |
+10 | use xxhash_rust::xxh64::xxh64;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `debug`, `error`, and `warn`
+  --> src/intelligence/mmap_db.rs:11:21
+   |
+11 | use tracing::{info, debug, warn, error};
+   |                     ^^^^^  ^^^^  ^^^^^
+
+warning: unused import: `std::collections::HashMap`
+  --> src/trading/jupiter_client.rs:10:5
+   |
+10 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::intelligence::SignalUrgency`
+  --> src/trading/execution_engine.rs:14:5
+   |
+14 | use crate::intelligence::SignalUrgency;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `base64::encode`: Use Engine::encode
+   --> src/core/wallet_management.rs:292:20
+    |
+292 |         Ok(base64::encode(encrypted))
+    |                    ^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated function `base64::decode`: Use Engine::decode
+   --> src/core/wallet_management.rs:303:39
+    |
+303 |         let encrypted_bytes = base64::decode(encrypted_key)
+    |                                       ^^^^^^
+
+warning: use of deprecated function `base64::decode`: Use Engine::decode
+   --> src/ingest/dex_parsers.rs:134:55
+    |
+134 |                     if let Ok(decoded_data) = base64::decode(data_str) {
+    |                                                       ^^^^^^
+
+warning: use of deprecated function `base64::decode`: Use Engine::decode
+   --> src/trading/jupiter_client.rs:505:41
+    |
+505 |         let transaction_bytes = base64::decode(&swap_response.swap_transaction)
+    |                                         ^^^^^^
+
+warning: unreachable statement
+   --> src/database/analytics/performance_tracker.rs:104:9
+    |
+101 |           return Ok(());
+    |           ------------- any code following this expression is unreachable
+...
+104 | /         let _create_performance_snapshots = r#"
+105 | |             CREATE TABLE IF NOT EXISTS performance_snapshots (
+106 | |                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+107 | |                 period_type TEXT NOT NULL CHECK (period_type IN ('HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY')),
+...   |
+133 | |         "#;
+    | |___________^ unreachable statement
+    |
+    = note: `#[warn(unreachable_code)]` on by default
+
+warning: unused variable: `create_signal_performance`
+   --> src/database/analytics/performance_tracker.rs:135:13
+    |
+135 |         let create_signal_performance = r#"
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_signal_performance`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `create_trading_sessions`
+   --> src/database/analytics/performance_tracker.rs:154:13
+    |
+154 |         let create_trading_sessions = r#"
+    |             ^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_trading_sessions`
+
+warning: unused variable: `create_indexes`
+   --> src/database/analytics/performance_tracker.rs:173:13
+    |
+173 |         let create_indexes = vec![
+    |             ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_indexes`
+
+warning: unreachable statement
+  --> src/intelligence/insider_detector.rs:36:9
+   |
+33 |           return Ok(());
+   |           ------------- any code following this expression is unreachable
+...
+36 | /         let _create_insider_wallets_table = r#"
+37 | |             CREATE TABLE IF NOT EXISTS insider_wallets (
+38 | |                 address TEXT PRIMARY KEY,
+39 | |                 confidence_score REAL NOT NULL,
+...  |
+55 | |         "#;
+   | |___________^ unreachable statement
+
+warning: unused variable: `create_wallet_trade_analysis_table`
+  --> src/intelligence/insider_detector.rs:57:13
+   |
+57 |         let create_wallet_trade_analysis_table = r#"
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_wallet_trade_analysis_table`
+
+warning: unused variable: `create_wallet_discovery_log_table`
+  --> src/intelligence/insider_detector.rs:79:13
+   |
+79 |         let create_wallet_discovery_log_table = r#"
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_wallet_discovery_log_table`
+
+warning: unused variable: `create_indexes`
+  --> src/intelligence/insider_detector.rs:94:13
+   |
+94 |         let create_indexes = vec![
+   |             ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_indexes`
+
+warning: variable `total_profit` is assigned to, but never used
+   --> src/intelligence/insider_detector.rs:501:17
+    |
+501 |         let mut total_profit = 0.0f64;
+    |                 ^^^^^^^^^^^^
+    |
+    = note: consider using `_total_profit` instead
+
+warning: use of deprecated method `chrono::NaiveDateTime::timestamp`: use `.and_utc().timestamp()` instead
+   --> src/intelligence/copy_trader.rs:421:81
+    |
+421 |         let today_start = Utc::now().date_naive().and_hms_opt(0, 0, 0).unwrap().timestamp();
+    |                                                                                 ^^^^^^^^^
+
+warning: use of deprecated method `chrono::NaiveDateTime::timestamp`: use `.and_utc().timestamp()` instead
+   --> src/intelligence/copy_trader.rs:443:81
+    |
+443 |         let today_start = Utc::now().date_naive().and_hms_opt(0, 0, 0).unwrap().timestamp();
+    |                                                                                 ^^^^^^^^^
+
+warning: unused variable: `result_str`
+   --> src/intelligence/background_sync.rs:277:13
+    |
+277 |         let result_str = match result.result {
+    |             ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_result_str`
+
+warning: unused variable: `exit_reason_str`
+   --> src/intelligence/background_sync.rs:283:13
+    |
+283 |         let exit_reason_str = match result.exit_reason {
+    |             ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_exit_reason_str`
+
+warning: unused variable: `recent_cutoff`
+   --> src/intelligence/performance_tracker.rs:213:13
+    |
+213 |         let recent_cutoff = Utc::now().timestamp() - (self.config.recent_performance_days as i64 * 24 * 3600);
+    |             ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_recent_cutoff`
+
+warning: unused variable: `wins`
+   --> src/intelligence/performance_tracker.rs:500:17
+    |
+500 |             let wins: i64 = performer.try_get("wins").unwrap_or(0);
+    |                 ^^^^ help: if this is intentional, prefix it with an underscore: `_wins`
+
+warning: use of deprecated method `chrono::DateTime::<Tz>::timestamp_nanos`: use `timestamp_nanos_opt()` instead
+   --> src/core/dex_types.rs:155:85
+    |
+155 |                 format!("liquidity_changed_{}_{}", pool_address, chrono::Utc::now().timestamp_nanos())
+    |                                                                                     ^^^^^^^^^^^^^^^
+
+warning: use of deprecated method `chrono::DateTime::<Tz>::timestamp_nanos`: use `timestamp_nanos_opt()` instead
+   --> src/core/dex_types.rs:243:69
+    |
+243 |                 format!("buy_{}_{}", token_mint, chrono::Utc::now().timestamp_nanos())
+    |                                                                     ^^^^^^^^^^^^^^^
+
+warning: use of deprecated method `chrono::DateTime::<Tz>::timestamp_nanos`: use `timestamp_nanos_opt()` instead
+   --> src/core/dex_types.rs:246:70
+    |
+246 |                 format!("sell_{}_{}", token_mint, chrono::Utc::now().timestamp_nanos())
+    |                                                                      ^^^^^^^^^^^^^^^
+
+warning: use of deprecated method `chrono::DateTime::<Tz>::timestamp_nanos`: use `timestamp_nanos_opt()` instead
+   --> src/core/dex_types.rs:249:70
+    |
+249 |                 format!("swap_{}_{}", token_mint, chrono::Utc::now().timestamp_nanos())
+    |                                                                      ^^^^^^^^^^^^^^^
+
+warning: unused import: `Row`
+ --> src/database/models.rs:2:12
+  |
+2 | use sqlx::{Row, FromRow, SqlitePool};
+  |            ^^^
+
+warning: unused import: `TimeZone`
+ --> src/database/cleanup.rs:6:29
+  |
+6 | use chrono::{DateTime, Utc, TimeZone};
+  |                             ^^^^^^^^
+
+warning: unused variable: `subscription_id`
+  --> src/ingest/dex_parsers.rs:16:33
+   |
+16 |     pub fn parse_program_update(subscription_id: u64, data: &Value) -> Result<Vec<MarketEvent>> {
+   |                                 ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_subscription_id`
+
+warning: unused variable: `slot`
+   --> src/ingest/dex_parsers.rs:163:81
+    |
+163 |     fn parse_orca_event(account: &serde_json::Map<String, Value>, pubkey: &str, slot: u64) -> Result<Vec<MarketEvent>> {
+    |                                                                                 ^^^^ help: if this is intentional, prefix it with an underscore: `_slot`
+
+warning: variable does not need to be mutable
+   --> src/ingest/dex_parsers.rs:164:13
+    |
+164 |         let mut events = Vec::new();
+    |             ----^^^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` on by default
+
+warning: unused variable: `instruction_data`
+   --> src/ingest/dex_parsers.rs:338:31
+    |
+338 |     pub fn parse_raydium_swap(instruction_data: &[u8]) -> Result<SwapEvent> {
+    |                               ^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_instruction_data`
+
+warning: unused variable: `instruction_data`
+   --> src/ingest/dex_parsers.rs:345:31
+    |
+345 |     pub fn parse_jupiter_swap(instruction_data: &[u8]) -> Result<SwapEvent> {
+    |                               ^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_instruction_data`
+
+warning: associated function `extract_wallet_from_context` is never used
+   --> src/ingest/dex_parsers.rs:382:8
+    |
+351 | impl DexEventParser {
+    | ------------------- associated function in this implementation
+...
+382 |     fn extract_wallet_from_context(account: &serde_json::Map<String, Value>) -> Option<String> {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: field `routing_rules` is never read
+  --> src/transport/routing.rs:20:5
+   |
+17 | pub struct ServiceRegistry {
+   |            --------------- field in this struct
+...
+20 |     routing_rules: Arc<RwLock<Vec<RoutingRule>>>,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `ServiceRegistry` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: fields `batch_size` and `batch_timeout` are never read
+  --> src/database/services.rs:20:5
+   |
+16 | pub struct PersistenceService {
+   |            ------------------ fields in this struct
+...
+20 |     batch_size: usize,
+   |     ^^^^^^^^^^
+21 |     batch_timeout: Duration,
+   |     ^^^^^^^^^^^^^
+
+warning: field `db` is never read
+   --> src/database/services.rs:271:5
+    |
+270 | pub struct WalletTrackerService {
+    |            -------------------- field in this struct
+271 |     db: Arc<BadgerDatabase>,
+    |     ^^
+
+warning: field `position_tracker` is never read
+  --> src/database/analytics/pnl_calculator.rs:58:5
+   |
+56 | pub struct PnLCalculator {
+   |            ------------- field in this struct
+57 |     db: Arc<BadgerDatabase>,
+58 |     position_tracker: Arc<PositionTracker>,
+   |     ^^^^^^^^^^^^^^^^
+
+warning: fields `position_tracker` and `pnl_calculator` are never read
+  --> src/database/analytics/performance_tracker.rs:75:5
+   |
+73 | pub struct PerformanceTracker {
+   |            ------------------ fields in this struct
+74 |     db: Arc<BadgerDatabase>,
+75 |     position_tracker: Arc<PositionTracker>,
+   |     ^^^^^^^^^^^^^^^^
+76 |     pnl_calculator: Arc<PnLCalculator>,
+   |     ^^^^^^^^^^^^^^
+
+warning: field `background_receiver` is never read
+  --> src/intelligence/mod.rs:59:5
+   |
+38 | pub struct WalletIntelligenceEngine {
+   |            ------------------------ field in this struct
+...
+59 |     background_receiver: Arc<tokio::sync::Mutex<mpsc::UnboundedReceiver<BackgroundUpdate>>>,
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: field `mmap` is never read
+  --> src/intelligence/mmap_db.rs:72:5
+   |
+70 | pub struct UltraFastWalletDB {
+   |            ----------------- field in this struct
+71 |     // Memory mapping
+72 |     mmap: MmapMut,
+   |     ^^^^
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> src/database/models.rs:368:36
+    |
+368 |     pub async fn begin_transaction(&self) -> Result<sqlx::Transaction<sqlx::Sqlite>, super::DatabaseError> {
+    |                                    ^^^^^            ------------------------------- the same lifetime is hidden here
+    |                                    |
+    |                                    the lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+    |
+368 |     pub async fn begin_transaction(&self) -> Result<sqlx::Transaction<'_, sqlx::Sqlite>, super::DatabaseError> {
+    |                                                                       +++
+
+warning: `badger` (lib) generated 86 warnings (run `cargo fix --lib -p badger` to apply 47 suggestions)
+warning: unused import: `WalletType`
+  --> src/main.rs:12:95
+   |
+12 | use badger::core::{MarketEvent, TradingSignal, DexType, WalletManager, WalletProvisionConfig, WalletType};
+   |                                                                                               ^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused variable: `confidence`
+   --> src/main.rs:288:42
+    |
+288 |         TradingSignal::Buy { token_mint, confidence, max_amount_sol, .. } => {
+    |                                          ^^^^^^^^^^-
+    |                                          |
+    |                                          help: try removing the field
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `session_id`
+   --> src/main.rs:799:17
+    |
+799 |             let session_id = match performance_tracker.start_trading_session().await {
+    |                 ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_session_id`
+
+warning: unused variable: `performance_tracker`
+   --> src/main.rs:890:13
+    |
+890 |         let performance_tracker = self.performance_tracker.clone();
+    |             ^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_performance_tracker`
+
+warning: value assigned to `client_handle` is never read
+    --> src/main.rs:1107:25
+     |
+1107 |                         client_handle = None;
+     |                         ^^^^^^^^^^^^^
+     |
+     = help: maybe it is overwritten before being read?
+     = note: `#[warn(unused_assignments)]` on by default
+
+warning: function `parse_and_display_program_update` is never used
+  --> src/main.rs:78:4
+   |
+78 | fn parse_and_display_program_update(subscription_id: u64, data: &serde_json::Value) {
+   |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: `badger` (bin "badger") generated 6 warnings (run `cargo fix --bin "badger"` to apply 2 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.69s
+     Running `target/debug/badger`
+[2m2025-08-31T04:47:26.767602Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🦡 Badger Trading Bot - Phase 4 Wallet Intelligence & Copy Trading
+[2m2025-08-31T04:47:26.768024Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ==============================================================
+[2m2025-08-31T04:47:26.768041Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m Version: 0.4.0-phase4
+[2m2025-08-31T04:47:26.768053Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m Phase 4 Features:
+[2m2025-08-31T04:47:26.768064Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🔥 Real-time Raydium AMM pool monitoring
+[2m2025-08-31T04:47:26.768075Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   ⚡ Jupiter V6 aggregator event tracking
+[2m2025-08-31T04:47:26.768099Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🌊 Orca Whirlpool program monitoring
+[2m2025-08-31T04:47:26.768108Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🪙 SPL Token new mint detection
+[2m2025-08-31T04:47:26.768117Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🚀 Pump.fun meme coin launch tracking
+[2m2025-08-31T04:47:26.768127Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🎯 Advanced trading signal generation
+[2m2025-08-31T04:47:26.768135Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🗄️ Persistent event storage and analytics
+[2m2025-08-31T04:47:26.768143Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   📊 Real-time performance tracking
+[2m2025-08-31T04:47:26.768151Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🕵️ Wallet intelligence and insider scoring
+[2m2025-08-31T04:47:26.768159Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🧠 Nanosecond-speed insider copy trading
+[2m2025-08-31T04:47:26.768168Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   ⚡ Ultra-fast decision making with memory cache
+[2m2025-08-31T04:47:26.768176Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🎯 Automated position sizing and signal generation
+[2m2025-08-31T04:47:26.768184Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🔍 High-performance data queries
+[2m2025-08-31T04:47:26.768211Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m Performance: Nanosecond decisions + comprehensive intelligence tracking
+[2m2025-08-31T04:47:26.768868Z[0m [34mDEBUG[0m ThreadId(01) [1mnew[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m Initializing EnhancedTransportBus with production channel sizes
+[2m2025-08-31T04:47:26.778439Z[0m [34mDEBUG[0m ThreadId(01) [1mnew[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m EnhancedTransportBus initialized successfully
+[2m2025-08-31T04:47:26.778685Z[0m [34mDEBUG[0m ThreadId(01) [1mnew[0m: [2mbadger::transport::routing[0m[2m:[0m Creating new ServiceRegistry [2m[3mtransport[0m[2m=[0mEnhancedTransportBus { market_events: broadcast::Sender, trading_signals: broadcast::Sender, wallet_events: broadcast::Sender, system_alerts: broadcast::Sender, stats: RwLock { data: BusStatistics { market_events_sent: 0, trading_signals_sent: 0, wallet_events_sent: 0, system_alerts_sent: 0, market_subscribers: 0, signal_subscribers: 0, wallet_subscribers: 0, alert_subscribers: 0 } } }[0m
+[2m2025-08-31T04:47:26.778832Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🚀 Starting all Badger services with Enhanced Transport Layer + Phase 3 Database
+[2m2025-08-31T04:47:26.778861Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🏦 Initializing Wallet Management System
+[2m2025-08-31T04:47:26.785821Z[0m [34mDEBUG[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🔐 Loaded existing encryption salt
+[2m2025-08-31T04:47:26.785903Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🏦 Initializing Wallet Management System
+[2m2025-08-31T04:47:26.785925Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 📖 Loading existing wallet configurations
+[2m2025-08-31T04:47:26.785953Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🔐 Existing wallets found, generating master password for decryption
+[2m2025-08-31T04:47:26.786109Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🔐 Loaded existing master password from file
+[2m2025-08-31T04:47:26.786580Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m ✅ Loaded Trading wallet: DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+[2m2025-08-31T04:47:26.786894Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m ✅ Loaded Cold wallet: AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+[2m2025-08-31T04:47:26.787002Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m ✅ All required wallets are present
+[2m2025-08-31T04:47:26.787012Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🔍 Validating wallet configurations
+[2m2025-08-31T04:47:26.787124Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m ✅ Validated Cold wallet: AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+[2m2025-08-31T04:47:26.787168Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m ✅ Validated Trading wallet: DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+[2m2025-08-31T04:47:26.787176Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 💰 Updating wallet balances
+[2m2025-08-31T04:47:27.705485Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 💳 Cold wallet balance: 0.000000 SOL
+[2m2025-08-31T04:47:27.854408Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 💳 Trading wallet balance: 0.000000 SOL
+[2m2025-08-31T04:47:27.854539Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🎯 Wallet Management System initialized successfully
+
+🏦 ═══════════════════════════════════════════════════════
+🏦 BADGER WALLET MANAGEMENT SYSTEM - SUMMARY
+🏦 ═══════════════════════════════════════════════════════
+📱 Cold Wallet:
+   Address: AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+   Alias: Cold Storage
+   Balance: 0.000000 SOL
+   Status: 🟢 ACTIVE
+   Created: 2025-08-31 02:12:06 UTC
+   🔍 Explorer Links:
+      Solscan:        https://solscan.io/account/AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+      Solana Explorer: https://explorer.solana.com/address/AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+      SolanaFM:       https://solana.fm/address/AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+      XRAY:           https://xray.helius.xyz/account/AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+
+📱 Trading Wallet:
+   Address: DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+   Alias: Trading Wallet
+   Balance: 0.000000 SOL
+   Status: 🟢 ACTIVE
+   Created: 2025-08-31 02:12:06 UTC
+   🔍 Explorer Links:
+      Solscan:        https://solscan.io/account/DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+      Solana Explorer: https://explorer.solana.com/address/DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+      SolanaFM:       https://solana.fm/address/DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+      XRAY:           https://xray.helius.xyz/account/DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+
+🏦 ═══════════════════════════════════════════════════════
+
+[2m2025-08-31T04:47:27.855125Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Wallet Management System initialized successfully
+[2m2025-08-31T04:47:27.855187Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🔄 Starting Transport Monitoring Service
+[2m2025-08-31T04:47:27.855502Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ⏳ Waiting for monitoring service subscriptions to complete...
+[2m2025-08-31T04:47:27.855922Z[0m [32m INFO[0m ThreadId(09) [2mbadger[0m[2m:[0m 🚀 Transport Monitor - Subscribing to all event channels
+[2m2025-08-31T04:47:27.856211Z[0m [34mDEBUG[0m ThreadId(09) [1msubscribe_market_events[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New market event subscriber added [3mtotal_subscribers[0m[2m=[0m1
+[2m2025-08-31T04:47:27.856325Z[0m [34mDEBUG[0m ThreadId(09) [1msubscribe_trading_signals[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New trading signal subscriber added [3mtotal_subscribers[0m[2m=[0m1
+[2m2025-08-31T04:47:27.856398Z[0m [34mDEBUG[0m ThreadId(09) [1msubscribe_wallet_events[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New wallet event subscriber added [3mtotal_subscribers[0m[2m=[0m1
+[2m2025-08-31T04:47:27.856475Z[0m [34mDEBUG[0m ThreadId(09) [1msubscribe_system_alerts[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New system alert subscriber added [3mtotal_subscribers[0m[2m=[0m1
+[2m2025-08-31T04:47:27.856514Z[0m [32m INFO[0m ThreadId(09) [2mbadger[0m[2m:[0m 📊 Transport Monitor subscriptions complete - signaling ready
+[2m2025-08-31T04:47:27.856594Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Monitoring service subscriptions ready
+[2m2025-08-31T04:47:27.856660Z[0m [34mDEBUG[0m ThreadId(01) [1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Registering service: Transport Layer Monitor (transport-monitor-001) [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "transport-monitor-001", name: "Transport Layer Monitor", service_type: Utility, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.856614Z }, SubscriptionInfo { event_type: TradingSignal, filters: [], subscribed_at: 2025-08-31T04:47:27.856615Z }], status: Starting, registered_at: 2025-08-31T04:47:27.856616Z, last_heartbeat: 2025-08-31T04:47:27.856616Z, metadata: {} } [3mservice_id[0m[2m=[0mtransport-monitor-001[0m
+[2m2025-08-31T04:47:27.856768Z[0m [33m WARN[0m ThreadId(09) [2mbadger[0m[2m:[0m Failed to update monitor service status: Service not found: transport-monitor-001
+[2m2025-08-31T04:47:27.856789Z[0m [32m INFO[0m ThreadId(09) [2mbadger[0m[2m:[0m 📊 Transport Monitor active - listening for events
+🎧 TRANSPORT MONITOR: Ready to receive events on all channels
+[2m2025-08-31T04:47:27.856822Z[0m [34mDEBUG[0m ThreadId(01) [1mregister_service[0m:[1mpublish_system_alert[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m Published system alert [3msubscriber_count[0m[2m=[0m1 [3mtotal_sent[0m[2m=[0m1 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "transport-monitor-001", name: "Transport Layer Monitor", service_type: Utility, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.856614Z }, SubscriptionInfo { event_type: TradingSignal, filters: [], subscribed_at: 2025-08-31T04:47:27.856615Z }], status: Starting, registered_at: 2025-08-31T04:47:27.856616Z, last_heartbeat: 2025-08-31T04:47:27.856616Z, metadata: {} } [3mservice_id[0m[2m=[0mtransport-monitor-001[0m [2m[3malert_type[0m[2m=[0mDiscriminant(5)[0m
+🚨 TRANSPORT BUS - SystemAlert received:
+[2m2025-08-31T04:47:27.856877Z[0m [32m INFO[0m ThreadId(09) [2mbadger[0m[2m:[0m 🚨 TRANSPORT BUS - SystemAlert received:
+  🟢 Service Started: Transport Layer Monitor v1.0.0
+[2m2025-08-31T04:47:27.856881Z[0m [34mDEBUG[0m ThreadId(01) [1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Service registered successfully: transport-monitor-001 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "transport-monitor-001", name: "Transport Layer Monitor", service_type: Utility, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.856614Z }, SubscriptionInfo { event_type: TradingSignal, filters: [], subscribed_at: 2025-08-31T04:47:27.856615Z }], status: Starting, registered_at: 2025-08-31T04:47:27.856616Z, last_heartbeat: 2025-08-31T04:47:27.856616Z, metadata: {} } [3mservice_id[0m[2m=[0mtransport-monitor-001[0m
+[2m2025-08-31T04:47:27.856919Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Transport monitoring service started and registered
+[2m2025-08-31T04:47:27.856962Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🗄️ Initializing Phase 3 Database Services
+[2m2025-08-31T04:47:27.856993Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database[0m[2m:[0m 🗄️ Initializing Database Manager for Phase 3
+[2m2025-08-31T04:47:27.867734Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database::models[0m[2m:[0m 🔄 Skipping old model-based migrations (using migration files)
+[2m2025-08-31T04:47:27.867769Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database::models[0m[2m:[0m ✅ Model initialization completed successfully
+[2m2025-08-31T04:47:27.867787Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database::models[0m[2m:[0m ✅ BadgerDatabase connected to: sqlite:data/badger.db
+[2m2025-08-31T04:47:27.867918Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database[0m[2m:[0m ✅ Database Manager initialized successfully
+[2m2025-08-31T04:47:27.867936Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🔄 Running database migrations...
+[2m2025-08-31T04:47:27.867975Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database::migrations[0m[2m:[0m 🔄 Starting database migration system
+[2m2025-08-31T04:47:27.868259Z[0m [34mDEBUG[0m ThreadId(01) [2mbadger::database::migrations[0m[2m:[0m 📊 Migration tracking table created/verified
+[2m2025-08-31T04:47:27.868803Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database::migrations[0m[2m:[0m 📁 Found 1 migration files
+[2m2025-08-31T04:47:27.868994Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database::migrations[0m[2m:[0m ✅ 1 migrations already applied
+[2m2025-08-31T04:47:27.869015Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database::migrations[0m[2m:[0m ✅ Database schema is up to date
+[2m2025-08-31T04:47:27.869028Z[0m [34mDEBUG[0m ThreadId(01) [2mbadger::database::migrations[0m[2m:[0m 🔍 Verifying database schema integrity
+[2m2025-08-31T04:47:27.871494Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database::migrations[0m[2m:[0m ✅ Database schema verification completed
+[2m2025-08-31T04:47:27.871746Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 📊 Migration status: ✅ Database is up to date (1 migrations applied)
+[2m2025-08-31T04:47:27.871761Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🔄 Initializing database session...
+[2m2025-08-31T04:47:27.872056Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Database session initialized successfully
+[2m2025-08-31T04:47:27.872207Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database[0m[2m:[0m 🚀 Enhanced database services started:
+[2m2025-08-31T04:47:27.872223Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database[0m[2m:[0m    ⚡ Batch Processing: Active
+[2m2025-08-31T04:47:27.872235Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database[0m[2m:[0m    🔍 Data Validation: Strict Mode
+[2m2025-08-31T04:47:27.872246Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database[0m[2m:[0m    🧹 Cleanup Service: 7d/30d/90d/365d retention
+[2m2025-08-31T04:47:27.872256Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database[0m[2m:[0m    📊 Analytics Engine: Active
+[2m2025-08-31T04:47:27.872266Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database[0m[2m:[0m    🕵️ Wallet Tracker: Active
+[2m2025-08-31T04:47:27.872291Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Phase 3 Database Services initialized successfully
+[2m2025-08-31T04:47:27.872317Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m 🧹 Cleanup Service starting with retention policy:
+[2m2025-08-31T04:47:27.872351Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m    📊 Hot data: 7 days
+[2m2025-08-31T04:47:27.872370Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🔧 Initializing analytics components for real-time metrics
+[2m2025-08-31T04:47:27.872373Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m    🔥 Warm data: 30 days
+[2m2025-08-31T04:47:27.872382Z[0m [32m INFO[0m ThreadId(02) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 🕵️ WalletTrackerService starting - wallet intelligence active
+[2m2025-08-31T04:47:27.872504Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::database::analytics::position_tracker[0m[2m:[0m 🔧 Initializing position tracker database schema
+[2m2025-08-31T04:47:27.872467Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m    ❄️  Cold archive: 90 days
+[2m2025-08-31T04:47:27.872497Z[0m [32m INFO[0m ThreadId(05) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 🗄️ PersistenceService starting - database storage active
+[2m2025-08-31T04:47:27.872588Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m    🗑️  Delete after: 365 days
+[2m2025-08-31T04:47:27.872550Z[0m [32m INFO[0m ThreadId(04) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 📊 AnalyticsService starting - real-time analytics engine active
+[2m2025-08-31T04:47:27.872439Z[0m [32m INFO[0m ThreadId(06) [1mrun[0m: [2mbadger::database::batch[0m[2m:[0m 🚀 Enhanced Persistence Service starting with batching
+[2m2025-08-31T04:47:27.872651Z[0m [34mDEBUG[0m ThreadId(05) [1mrun[0m:[1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Registering service: Database Persistence Service (persistence-service-001) [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "persistence-service-001", name: "Database Persistence Service", service_type: Storage, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.872622Z }, SubscriptionInfo { event_type: TradingSignal, filters: [], subscribed_at: 2025-08-31T04:47:27.872623Z }], status: Starting, registered_at: 2025-08-31T04:47:27.872623Z, last_heartbeat: 2025-08-31T04:47:27.872624Z, metadata: {} } [3mservice_id[0m[2m=[0mpersistence-service-001[0m
+[2m2025-08-31T04:47:27.872602Z[0m [34mDEBUG[0m ThreadId(02) [1mrun[0m:[1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Registering service: Wallet Intelligence Service (wallet-tracker-service-001) [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "wallet-tracker-service-001", name: "Wallet Intelligence Service", service_type: Analytics, version: "1.0.0", capabilities: [WalletEventProducer, MarketEventConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.872564Z }], status: Starting, registered_at: 2025-08-31T04:47:27.872565Z, last_heartbeat: 2025-08-31T04:47:27.872565Z, metadata: {} } [3mservice_id[0m[2m=[0mwallet-tracker-service-001[0m
+[2m2025-08-31T04:47:27.872659Z[0m [34mDEBUG[0m ThreadId(04) [1mrun[0m:[1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Registering service: Real-time Analytics Service (analytics-service-001) [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "analytics-service-001", name: "Real-time Analytics Service", service_type: Analytics, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.872633Z }], status: Starting, registered_at: 2025-08-31T04:47:27.872633Z, last_heartbeat: 2025-08-31T04:47:27.872634Z, metadata: {} } [3mservice_id[0m[2m=[0manalytics-service-001[0m
+[2m2025-08-31T04:47:27.872720Z[0m [34mDEBUG[0m ThreadId(05) [1mrun[0m:[1mregister_service[0m:[1mpublish_system_alert[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m Published system alert [3msubscriber_count[0m[2m=[0m1 [3mtotal_sent[0m[2m=[0m2 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "persistence-service-001", name: "Database Persistence Service", service_type: Storage, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.872622Z }, SubscriptionInfo { event_type: TradingSignal, filters: [], subscribed_at: 2025-08-31T04:47:27.872623Z }], status: Starting, registered_at: 2025-08-31T04:47:27.872623Z, last_heartbeat: 2025-08-31T04:47:27.872624Z, metadata: {} } [3mservice_id[0m[2m=[0mpersistence-service-001[0m [2m[3malert_type[0m[2m=[0mDiscriminant(5)[0m
+[2m2025-08-31T04:47:27.872777Z[0m [34mDEBUG[0m ThreadId(05) [1mrun[0m:[1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Service registered successfully: persistence-service-001 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "persistence-service-001", name: "Database Persistence Service", service_type: Storage, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.872622Z }, SubscriptionInfo { event_type: TradingSignal, filters: [], subscribed_at: 2025-08-31T04:47:27.872623Z }], status: Starting, registered_at: 2025-08-31T04:47:27.872623Z, last_heartbeat: 2025-08-31T04:47:27.872624Z, metadata: {} } [3mservice_id[0m[2m=[0mpersistence-service-001[0m
+[2m2025-08-31T04:47:27.872817Z[0m [34mDEBUG[0m ThreadId(05) [1mrun[0m:[1msubscribe_market_events[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New market event subscriber added [3mtotal_subscribers[0m[2m=[0m2
+[2m2025-08-31T04:47:27.872841Z[0m [32m INFO[0m ThreadId(06) [2mbadger::database::batch[0m[2m:[0m 📦 Trading signals batch processor started
+🚨 TRANSPORT BUS - SystemAlert received:
+[2m2025-08-31T04:47:27.872850Z[0m [32m INFO[0m ThreadId(09) [2mbadger::database::batch[0m[2m:[0m 📦 Market events batch processor started
+[2m2025-08-31T04:47:27.872924Z[0m [34mDEBUG[0m ThreadId(08) [1mrun[0m:[1mregister_service[0m:[1mpublish_system_alert[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m Published system alert [3msubscriber_count[0m[2m=[0m1 [3mtotal_sent[0m[2m=[0m3 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "analytics-service-001", name: "Real-time Analytics Service", service_type: Analytics, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.872633Z }], status: Starting, registered_at: 2025-08-31T04:47:27.872633Z, last_heartbeat: 2025-08-31T04:47:27.872634Z, metadata: {} } [3mservice_id[0m[2m=[0manalytics-service-001[0m [2m[3malert_type[0m[2m=[0mDiscriminant(5)[0m
+[2m2025-08-31T04:47:27.872892Z[0m [32m INFO[0m ThreadId(05) [2mbadger[0m[2m:[0m 🚨 TRANSPORT BUS - SystemAlert received:
+  🟢 Service Started: Database Persistence Service v1.0.0
+🚨 TRANSPORT BUS - SystemAlert received:
+[2m2025-08-31T04:47:27.872976Z[0m [34mDEBUG[0m ThreadId(08) [1mrun[0m:[1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Service registered successfully: analytics-service-001 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "analytics-service-001", name: "Real-time Analytics Service", service_type: Analytics, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.872633Z }], status: Starting, registered_at: 2025-08-31T04:47:27.872633Z, last_heartbeat: 2025-08-31T04:47:27.872634Z, metadata: {} } [3mservice_id[0m[2m=[0manalytics-service-001[0m
+[2m2025-08-31T04:47:27.872984Z[0m [32m INFO[0m ThreadId(05) [2mbadger[0m[2m:[0m 🚨 TRANSPORT BUS - SystemAlert received:
+  🟢 Service Started: Real-time Analytics Service v1.0.0
+🚨 TRANSPORT BUS - SystemAlert received:
+[2m2025-08-31T04:47:27.873022Z[0m [32m INFO[0m ThreadId(05) [2mbadger[0m[2m:[0m 🚨 TRANSPORT BUS - SystemAlert received:
+  🟢 Service Started: Wallet Intelligence Service v1.0.0
+[2m2025-08-31T04:47:27.873042Z[0m [34mDEBUG[0m ThreadId(08) [1mrun[0m:[1msubscribe_trading_signals[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New trading signal subscriber added [3mtotal_subscribers[0m[2m=[0m2
+[2m2025-08-31T04:47:27.873093Z[0m [34mDEBUG[0m ThreadId(08) [1mrun[0m:[1mregister_service[0m:[1mpublish_system_alert[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m Published system alert [3msubscriber_count[0m[2m=[0m1 [3mtotal_sent[0m[2m=[0m4 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "wallet-tracker-service-001", name: "Wallet Intelligence Service", service_type: Analytics, version: "1.0.0", capabilities: [WalletEventProducer, MarketEventConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.872564Z }], status: Starting, registered_at: 2025-08-31T04:47:27.872565Z, last_heartbeat: 2025-08-31T04:47:27.872565Z, metadata: {} } [3mservice_id[0m[2m=[0mwallet-tracker-service-001[0m [2m[3malert_type[0m[2m=[0mDiscriminant(5)[0m
+[2m2025-08-31T04:47:27.873150Z[0m [34mDEBUG[0m ThreadId(08) [1mrun[0m:[1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Service registered successfully: wallet-tracker-service-001 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "wallet-tracker-service-001", name: "Wallet Intelligence Service", service_type: Analytics, version: "1.0.0", capabilities: [WalletEventProducer, MarketEventConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:47:27.872564Z }], status: Starting, registered_at: 2025-08-31T04:47:27.872565Z, last_heartbeat: 2025-08-31T04:47:27.872565Z, metadata: {} } [3mservice_id[0m[2m=[0mwallet-tracker-service-001[0m
+[2m2025-08-31T04:47:27.873211Z[0m [34mDEBUG[0m ThreadId(08) [1mrun[0m:[1msubscribe_market_events[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New market event subscriber added [3mtotal_subscribers[0m[2m=[0m4
+[2m2025-08-31T04:47:27.873254Z[0m [34mDEBUG[0m ThreadId(09) [1mrun[0m:[1msubscribe_wallet_events[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New wallet event subscriber added [3mtotal_subscribers[0m[2m=[0m2
+[2m2025-08-31T04:47:27.873334Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 📦 PersistenceService subscriptions active - storing events
+[2m2025-08-31T04:47:27.873374Z[0m [34mDEBUG[0m ThreadId(09) [1mrun[0m:[1msubscribe_market_events[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New market event subscriber added [3mtotal_subscribers[0m[2m=[0m4
+[2m2025-08-31T04:47:27.873436Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 👁️ WalletTrackerService subscriptions active - tracking wallets
+[2m2025-08-31T04:47:27.873472Z[0m [34mDEBUG[0m ThreadId(09) [1mrun[0m:[1msubscribe_trading_signals[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New trading signal subscriber added [3mtotal_subscribers[0m[2m=[0m3
+[2m2025-08-31T04:47:27.873526Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 📈 AnalyticsService subscriptions active - calculating metrics
+[2m2025-08-31T04:47:27.873688Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::database::analytics::position_tracker[0m[2m:[0m ✅ Position tracker database schema initialized
+[2m2025-08-31T04:47:27.873733Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::database::analytics::pnl_calculator[0m[2m:[0m 🔧 Initializing P&L calculator database schema
+[2m2025-08-31T04:47:27.874042Z[0m [32m INFO[0m ThreadId(08) [2mbadger::database::batch[0m[2m:[0m 📊 BATCH PROCESSING STATS:
+[2m2025-08-31T04:47:27.874041Z[0m [34mDEBUG[0m ThreadId(07) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 📊 Analytics calculation skipped - no real trading data yet
+[2m2025-08-31T04:47:27.874067Z[0m [32m INFO[0m ThreadId(08) [2mbadger::database::batch[0m[2m:[0m    📦 Market Events Processed: 0
+[2m2025-08-31T04:47:27.874099Z[0m [32m INFO[0m ThreadId(08) [2mbadger::database::batch[0m[2m:[0m    📶 Trading Signals Processed: 0
+[2m2025-08-31T04:47:27.874060Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m 🧹 Running full cleanup and archiving
+[2m2025-08-31T04:47:27.874114Z[0m [32m INFO[0m ThreadId(08) [2mbadger::database::batch[0m[2m:[0m    ⚡ Total Throughput: 0 events
+[2m2025-08-31T04:47:27.874124Z[0m [34mDEBUG[0m ThreadId(07) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 🏆 Wallet reporting skipped - no real wallet scores yet
+[2m2025-08-31T04:47:27.874123Z[0m [34mDEBUG[0m ThreadId(05) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 💾 Database health check - SQLite auto-persisting
+[2m2025-08-31T04:47:27.874259Z[0m [34mDEBUG[0m ThreadId(07) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 🧮 Updating wallet intelligence scores
+[2m2025-08-31T04:47:27.874367Z[0m [32m INFO[0m ThreadId(08) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 📊 DATABASE STATISTICS:
+[2m2025-08-31T04:47:27.874390Z[0m [32m INFO[0m ThreadId(08) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m    🗄️ Market Events Stored: 0
+[2m2025-08-31T04:47:27.874408Z[0m [32m INFO[0m ThreadId(08) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m    📶 Trading Signals: 0
+[2m2025-08-31T04:47:27.874426Z[0m [32m INFO[0m ThreadId(08) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m    ⏱️ Session Runtime: 0.0m
+[2m2025-08-31T04:47:27.874444Z[0m [32m INFO[0m ThreadId(08) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m    💾 Database Size: 0 records
+[2m2025-08-31T04:47:27.875702Z[0m [34mDEBUG[0m ThreadId(09) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m 🧹 Running VACUUM to reclaim disk space
+[2m2025-08-31T04:47:27.877725Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::database::analytics::pnl_calculator[0m[2m:[0m ✅ P&L calculator database schema initialized
+[2m2025-08-31T04:47:27.877771Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::database::analytics::performance_tracker[0m[2m:[0m 🔧 Performance tracker schema initialization (skipped - handled by migration system)
+[2m2025-08-31T04:47:27.877793Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::database::analytics::performance_tracker[0m[2m:[0m ✅ Performance tracker schema ready
+[2m2025-08-31T04:47:27.877851Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::database::analytics::insider_analytics[0m[2m:[0m 🔧 Initializing insider analytics database schema
+[2m2025-08-31T04:47:27.878026Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m: [2mbadger::database::services[0m[2m:[0m 📊 Database Stats: 0 events, 0 signals stored
+[2m2025-08-31T04:47:27.879241Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::database::analytics::insider_analytics[0m[2m:[0m ✅ Insider analytics database schema initialized
+[2m2025-08-31T04:47:27.879297Z[0m [32m INFO[0m ThreadId(01) [2mbadger::intelligence[0m[2m:[0m 🧠 Initializing Wallet Intelligence Engine
+[2m2025-08-31T04:47:27.879314Z[0m [32m INFO[0m ThreadId(01) [2mbadger::intelligence::cache[0m[2m:[0m 🧠 Initializing WalletIntelligenceCache with config: min_confidence=0.75, max_token_age=30min
+[2m2025-08-31T04:47:27.879655Z[0m [32m INFO[0m ThreadId(01) [1mload_existing_insiders[0m: [2mbadger::intelligence::insider_detector[0m[2m:[0m 📊 Loaded 0 existing insider wallets from database
+[2m2025-08-31T04:47:27.879696Z[0m [34mDEBUG[0m ThreadId(01) [2mbadger::intelligence::cache[0m[2m:[0m 🏆 Updated top performers list with 0 wallets
+[2m2025-08-31T04:47:27.879711Z[0m [32m INFO[0m ThreadId(01) [2mbadger::intelligence::cache[0m[2m:[0m ✅ Cache initialized with 0 insider wallets (0 active, 0 blacklisted)
+[2m2025-08-31T04:47:27.879724Z[0m [32m INFO[0m ThreadId(01) [2mbadger::intelligence[0m[2m:[0m ✅ Wallet Intelligence Engine initialized with 0 insider wallets
+[2m2025-08-31T04:47:27.879735Z[0m [32m INFO[0m ThreadId(01) [2mbadger::intelligence[0m[2m:[0m 🔧 Initializing wallet intelligence database schema
+[2m2025-08-31T04:47:27.879753Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::intelligence::insider_detector[0m[2m:[0m 🔧 Insider detector schema initialization (skipped - handled by migration system)
+[2m2025-08-31T04:47:27.879778Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::intelligence::insider_detector[0m[2m:[0m ✅ Insider detector schema ready
+[2m2025-08-31T04:47:27.879825Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::intelligence::copy_trader[0m[2m:[0m 🔧 Initializing copy trading database schema
+[2m2025-08-31T04:47:27.880570Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::intelligence::copy_trader[0m[2m:[0m ✅ Copy trading database schema initialized
+[2m2025-08-31T04:47:27.880601Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::intelligence::performance_tracker[0m[2m:[0m 🔧 Initializing performance tracker database schema
+[2m2025-08-31T04:47:27.880909Z[0m [32m INFO[0m ThreadId(01) [1minitialize_schema[0m: [2mbadger::intelligence::performance_tracker[0m[2m:[0m ✅ Performance tracker database schema initialized
+[2m2025-08-31T04:47:27.880936Z[0m [32m INFO[0m ThreadId(01) [2mbadger::intelligence[0m[2m:[0m ✅ Wallet intelligence database schema initialized
+[2m2025-08-31T04:47:27.880947Z[0m [32m INFO[0m ThreadId(01) [2mbadger::intelligence[0m[2m:[0m 🚀 Starting wallet intelligence background tasks
+[2m2025-08-31T04:47:27.880967Z[0m [32m INFO[0m ThreadId(01) [2mbadger::intelligence[0m[2m:[0m ✅ Background tasks started
+[2m2025-08-31T04:47:27.880978Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Analytics components initialized successfully
+[2m2025-08-31T04:47:27.880988Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m    📊 Position Tracker: Ready for real-time position tracking
+[2m2025-08-31T04:47:27.880997Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m    💰 P&L Calculator: Ready for real-time profit/loss calculation
+[2m2025-08-31T04:47:27.881006Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m    📈 Performance Tracker: Ready for bot performance metrics
+[2m2025-08-31T04:47:27.881015Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m    🕵️ Insider Analytics: Ready for wallet intelligence tracking
+[2m2025-08-31T04:47:27.881023Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m    🧠 Wallet Intelligence: Ready for nanosecond insider copy trading
+[2m2025-08-31T04:47:27.881038Z[0m [32m INFO[0m ThreadId(08) [1mrun_background_sync[0m: [2mbadger::intelligence::background_sync[0m[2m:[0m 🔄 Starting background synchronization engine
+[2m2025-08-31T04:47:27.881055Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🔄 Starting Enhanced Badger Ingestion Service with Transport Layer
+[2m2025-08-31T04:47:27.881067Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m Connecting to Solana mainnet WebSocket endpoints
+[2m2025-08-31T04:47:27.881092Z[0m [34mDEBUG[0m ThreadId(01) [1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Registering service: Solana WebSocket Ingestion (ingestion-service-001) [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "ingestion-service-001", name: "Solana WebSocket Ingestion", service_type: Ingestion, version: "1.0.0", capabilities: [MarketEventProducer, TradingSignalProducer], subscriptions: [], status: Starting, registered_at: 2025-08-31T04:47:27.881074Z, last_heartbeat: 2025-08-31T04:47:27.881075Z, metadata: {} } [3mservice_id[0m[2m=[0mingestion-service-001[0m
+🚨 TRANSPORT BUS - SystemAlert received:
+[2m2025-08-31T04:47:27.881134Z[0m [34mDEBUG[0m ThreadId(01) [1mregister_service[0m:[1mpublish_system_alert[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m Published system alert [3msubscriber_count[0m[2m=[0m1 [3mtotal_sent[0m[2m=[0m5 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "ingestion-service-001", name: "Solana WebSocket Ingestion", service_type: Ingestion, version: "1.0.0", capabilities: [MarketEventProducer, TradingSignalProducer], subscriptions: [], status: Starting, registered_at: 2025-08-31T04:47:27.881074Z, last_heartbeat: 2025-08-31T04:47:27.881075Z, metadata: {} } [3mservice_id[0m[2m=[0mingestion-service-001[0m [2m[3malert_type[0m[2m=[0mDiscriminant(5)[0m
+[2m2025-08-31T04:47:27.881155Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m 🚨 TRANSPORT BUS - SystemAlert received:
+  🟢 Service Started: Solana WebSocket Ingestion v1.0.0
+[2m2025-08-31T04:47:27.881184Z[0m [34mDEBUG[0m ThreadId(01) [1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Service registered successfully: ingestion-service-001 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "ingestion-service-001", name: "Solana WebSocket Ingestion", service_type: Ingestion, version: "1.0.0", capabilities: [MarketEventProducer, TradingSignalProducer], subscriptions: [], status: Starting, registered_at: 2025-08-31T04:47:27.881074Z, last_heartbeat: 2025-08-31T04:47:27.881075Z, metadata: {} } [3mservice_id[0m[2m=[0mingestion-service-001[0m
+[2m2025-08-31T04:47:27.881220Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Ingestion service started successfully
+[2m2025-08-31T04:47:27.881227Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m 🚀 Badger Ingest - Real-time Solana Data Processing
+[2m2025-08-31T04:47:27.881254Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 📊 Starting real-time analytics reporting service
+[2m2025-08-31T04:47:27.881254Z[0m [32m INFO[0m ThreadId(08) [1mnew[0m: [2mbadger::ingest::websocket[0m[2m:[0m Initializing Solana WebSocket client with primary URL: wss://api.mainnet-beta.solana.com [2m[3mconfig[0m[2m=[0mWebSocketConfig { primary_url: "wss://api.mainnet-beta.solana.com", backup_urls: ["wss://rpc.ankr.com/solana_ws", "wss://solana-api.projectserum.com"], connect_timeout_ms: 10000, max_reconnect_attempts: 10, reconnect_delay_ms: 5000, heartbeat_interval_ms: 10000 }[0m
+[2m2025-08-31T04:47:27.881275Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Analytics reporting service started successfully
+[2m2025-08-31T04:47:27.881283Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m ✅ WebSocket client initialized successfully
+[2m2025-08-31T04:47:27.881286Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🏦 Starting wallet monitoring service
+[2m2025-08-31T04:47:27.881318Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Wallet monitoring service started successfully
+[2m2025-08-31T04:47:27.881328Z[0m [32m INFO[0m ThreadId(09) [2mbadger[0m[2m:[0m 🏦 Wallet monitoring service started - checking balances every 60 seconds
+[2m2025-08-31T04:47:27.881331Z[0m [34mDEBUG[0m ThreadId(08) [1mroute_system_alert[0m: [2mbadger::transport::routing[0m[2m:[0m Routing system alert from service: Some("ingestion-service-001") [2m[3msource_service[0m[2m=[0mSome("ingestion-service-001")[0m
+[2m2025-08-31T04:47:27.881332Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 📊 Initial Transport Bus Statistics:
+[2m2025-08-31T04:47:27.881362Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   - Market Event Subscribers: 4
+[2m2025-08-31T04:47:27.881372Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   - Trading Signal Subscribers: 3
+[2m2025-08-31T04:47:27.881364Z[0m [34mDEBUG[0m ThreadId(08) [1mroute_system_alert[0m:[1mpublish_system_alert[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m Published system alert [3msubscriber_count[0m[2m=[0m1 [3mtotal_sent[0m[2m=[0m6 [2m[3msource_service[0m[2m=[0mSome("ingestion-service-001")[0m [2m[3malert_type[0m[2m=[0mDiscriminant(5)[0m
+[2m2025-08-31T04:47:27.881385Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   - Wallet Event Subscribers: 2
+[2m2025-08-31T04:47:27.881405Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   - System Alert Subscribers: 1
+[2m2025-08-31T04:47:27.881411Z[0m [34mDEBUG[0m ThreadId(08) [1mroute_system_alert[0m: [2mbadger::transport::routing[0m[2m:[0m System alert routed to 1 subscribers [2m[3msource_service[0m[2m=[0mSome("ingestion-service-001")[0m
+📤 Sent service startup alert to transport bus
+[2m2025-08-31T04:47:27.881423Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ All 10 services started successfully
+
+🔍 BADGER TRADING BOT - FULLY OPERATIONAL
+   🏦 Wallet Management:
+      • Cold: AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ (0.000000 SOL)
+🚨 TRANSPORT BUS - SystemAlert received:
+      • Trading: DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n (0.000000 SOL)
+   📊 Listening for real-time Solana DEX activity
+   🗄️ Database Services Active:
+      • PersistenceService - Storing all events
+      • AnalyticsService - Real-time performance tracking
+      • WalletTrackerService - Insider scoring system
+      • QueryService - High-performance data queries
+   🎯 Market events will appear when DEX transactions occur:
+      • New Raydium AMM pools created
+      • Jupiter aggregator swaps executed
+      • Orca Whirlpool activity detected
+      • New tokens launched on Pump.fun
+      • Large SPL token transfers
+   ⏳ Note: Real DEX events may be infrequent - this is normal
+   📈 Analytics and database stats will update periodically
+
+[2m2025-08-31T04:47:27.881475Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m 📡 Starting WebSocket client - will subscribe after connection
+[2m2025-08-31T04:47:27.881577Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🎯 Badger is now operational
+[2m2025-08-31T04:47:27.881490Z[0m [32m INFO[0m ThreadId(09) [2mbadger[0m[2m:[0m 🚨 TRANSPORT BUS - SystemAlert received:
+  🟢 Service Started: Solana WebSocket Ingestion v1.0.0
+[2m2025-08-31T04:47:27.881591Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 📊 Real-time Solana blockchain ingestion active
+[2m2025-08-31T04:47:27.881614Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🔄 Ready for additional services integration
+[2m2025-08-31T04:47:27.881623Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m Press Ctrl+C to initiate graceful shutdown
+[2m2025-08-31T04:47:27.881631Z[0m [32m INFO[0m ThreadId(08) [1mrun[0m: [2mbadger::ingest::websocket[0m[2m:[0m Starting Solana WebSocket client connection loop
+[2m2025-08-31T04:47:27.881698Z[0m [32m INFO[0m ThreadId(08) [1mrun[0m:[1mconnect_and_handle[0m: [2mbadger::ingest::websocket[0m[2m:[0m Attempting to connect to Solana RPC WebSocket: wss://api.mainnet-beta.solana.com [2m[3murl[0m[2m=[0m"wss://api.mainnet-beta.solana.com"[0m
+[2m2025-08-31T04:47:27.882188Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m 🟢 Connected to Solana WebSocket: wss://api.mainnet-beta.solana.com
+🎯 Connection established - auto-subscriptions will be sent!
+
+📈 TRANSPORT BUS ACTIVITY (Last 30s):
+  🔥 Market Events: 0 sent | 4 subscribers
+  🎯 Trading Signals: 0 sent | 3 subscribers
+  👛 Wallet Events: 0 sent | 2 subscribers
+  🚨 System Alerts: 6 sent | 1 subscribers
+[2m2025-08-31T04:47:27.885780Z[0m [34mDEBUG[0m ThreadId(16) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m ✅ VACUUM completed
+[2m2025-08-31T04:47:27.885810Z[0m [32m INFO[0m ThreadId(16) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m ✅ Full cleanup completed:
+[2m2025-08-31T04:47:27.885827Z[0m [32m INFO[0m ThreadId(16) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m    📊 Hot records: 0
+[2m2025-08-31T04:47:27.885843Z[0m [32m INFO[0m ThreadId(16) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m    🔥 Warm records: 0
+[2m2025-08-31T04:47:27.885858Z[0m [32m INFO[0m ThreadId(16) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m    ❄️  Archived records: 0
+[2m2025-08-31T04:47:27.885873Z[0m [32m INFO[0m ThreadId(16) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m    🗑️  Deleted records: 0
+[2m2025-08-31T04:47:27.885888Z[0m [32m INFO[0m ThreadId(16) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m    💾 Disk space freed: 0.00 MB
+[2m2025-08-31T04:47:27.885909Z[0m [34mDEBUG[0m ThreadId(16) [1mrun[0m: [2mbadger::database::cleanup[0m[2m:[0m 🧹 Running light cleanup
+[2m2025-08-31T04:47:27.892496Z[0m [32m INFO[0m ThreadId(16) [2mbadger::database::analytics::performance_tracker[0m[2m:[0m 🚀 Started trading session: session_1756615647
+[2m2025-08-31T04:47:27.892514Z[0m [32m INFO[0m ThreadId(16) [2mbadger[0m[2m:[0m 🚀 Started trading session: session_1756615647
+
+═══════════════════════════════════════════════════════
+📊 BADGER BOT REAL-TIME ANALYTICS REPORT
+═══════════════════════════════════════════════════════
+[2m2025-08-31T04:47:27.893529Z[0m [33m WARN[0m ThreadId(09) [2mbadger[0m[2m:[0m Failed to get position summary: Query execution failed: Failed to fetch position summary: error returned from database: (code: 1) no such column: fees
+💰 PORTFOLIO P&L:
+   Realized P&L: $0.0000 | Unrealized P&L: $0.0000
+   Net P&L: $0.0000 | Portfolio ROI: 0.00%
+   Profit Factor: 0.00 | Sharpe Ratio: 0.00
+🕵️ TOP INSIDER WALLETS: No insider activity detected yet
+═══════════════════════════════════════════════════════
+
+[2m2025-08-31T04:47:27.893984Z[0m [34mDEBUG[0m ThreadId(09) [1mcalculate_performance[0m: [2mbadger::database::analytics::performance_tracker[0m[2m:[0m 📊 Calculating performance metrics for period 1756612047 to 1756615647 [2m[3mperiod_start[0m[2m=[0m1756612047 [3mperiod_end[0m[2m=[0m1756615647[0m
+[2m2025-08-31T04:47:27.894538Z[0m [34mDEBUG[0m ThreadId(16) [2mbadger::database::analytics::pnl_calculator[0m[2m:[0m 💾 Saved HOURLY P&L snapshot: Net P&L $0.0000
+[2m2025-08-31T04:47:28.025394Z[0m [34mDEBUG[0m ThreadId(02) [2mbadger[0m[2m:[0m 💳 Cold wallet balance updated: 0.000000 SOL
+[2m2025-08-31T04:47:28.171670Z[0m [34mDEBUG[0m ThreadId(02) [2mbadger[0m[2m:[0m 💳 Trading wallet balance updated: 0.000000 SOL
+
+🏦 ═══════════════════════════════════════════════════════
+🏦 WALLET HEALTH CHECK - 04:47:28 UTC
+🏦 ═══════════════════════════════════════════════════════
+📱 Cold Wallet:
+   Address: AmXNkfff...2GEJHboJ
+   Balance: 0.000000 SOL | Status: 🟢 Active
+   Last Accessed: Never
+   🔍 Solscan: https://solscan.io/account/AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+📱 Trading Wallet:
+   Address: DQeCo2gW...jaNyFR7n
+   Balance: 0.000000 SOL | Status: 🟢 Active
+   Last Accessed: Never
+   🔍 Solscan: https://solscan.io/account/DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+🏦 ═══════════════════════════════════════════════════════
+
+[2m2025-08-31T04:47:28.649078Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m:[1mconnect_and_handle[0m: [2mbadger::ingest::websocket[0m[2m:[0m Successfully connected to wss://api.mainnet-beta.solana.com (HTTP 101 Switching Protocols) [2m[3murl[0m[2m=[0m"wss://api.mainnet-beta.solana.com"[0m
+[2m2025-08-31T04:47:28.649316Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m:[1mconnect_and_handle[0m: [2mbadger::ingest::websocket[0m[2m:[0m 🔧 Auto-subscribing to Solana data streams... [2m[3murl[0m[2m=[0m"wss://api.mainnet-beta.solana.com"[0m
+[2m2025-08-31T04:47:28.649559Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m:[1mconnect_and_handle[0m: [2mbadger::ingest::websocket[0m[2m:[0m 📡 Sent slot subscription request [2m[3murl[0m[2m=[0m"wss://api.mainnet-beta.solana.com"[0m
+[2m2025-08-31T04:47:28.649750Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m:[1mconnect_and_handle[0m: [2mbadger::ingest::websocket[0m[2m:[0m 📡 Sent USDC account subscription request [2m[3murl[0m[2m=[0m"wss://api.mainnet-beta.solana.com"[0m
+[2m2025-08-31T04:47:28.649882Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m:[1mconnect_and_handle[0m: [2mbadger::ingest::websocket[0m[2m:[0m 📡 Sent Raydium program subscription request [2m[3murl[0m[2m=[0m"wss://api.mainnet-beta.solana.com"[0m
+[2m2025-08-31T04:47:28.650026Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m:[1mconnect_and_handle[0m: [2mbadger::ingest::websocket[0m[2m:[0m 📡 Sent Jupiter V6 program subscription request [2m[3murl[0m[2m=[0m"wss://api.mainnet-beta.solana.com"[0m
+[2m2025-08-31T04:47:28.650174Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m:[1mconnect_and_handle[0m: [2mbadger::ingest::websocket[0m[2m:[0m 📡 Sent Orca Whirlpool program subscription request [2m[3murl[0m[2m=[0m"wss://api.mainnet-beta.solana.com"[0m
+[2m2025-08-31T04:47:28.650275Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m:[1mconnect_and_handle[0m: [2mbadger::ingest::websocket[0m[2m:[0m 📡 Sent SPL Token program subscription request [2m[3murl[0m[2m=[0m"wss://api.mainnet-beta.solana.com"[0m
+[2m2025-08-31T04:47:28.650366Z[0m [32m INFO[0m ThreadId(09) [1mrun[0m:[1mconnect_and_handle[0m: [2mbadger::ingest::websocket[0m[2m:[0m 📡 Sent Pump.fun program subscription request [2m[3murl[0m[2m=[0m"wss://api.mainnet-beta.solana.com"[0m
+[2m2025-08-31T04:47:28.785444Z[0m [32m INFO[0m ThreadId(07) [1mhandle_message[0m: [2mbadger::ingest::websocket[0m[2m:[0m Subscription confirmed: request_id=999, subscription_id=2205 [2m{"jsonrpc":"2.0","result":2205,"id":999}[0m
+[2m2025-08-31T04:47:28.785869Z[0m [32m INFO[0m ThreadId(07) [2mbadger[0m[2m:[0m ✅ Subscription confirmed: 2205 (request: 999)
+🎯 SUBSCRIPTION CONFIRMED: Slot Updates (sub: 2205, req: 999)
+   📡 This subscription will send program account updates for DEX analysis
+[2m2025-08-31T04:47:28.921587Z[0m [32m INFO[0m ThreadId(07) [1mhandle_message[0m: [2mbadger::ingest::websocket[0m[2m:[0m Subscription confirmed: request_id=998, subscription_id=69230993 [2m{"jsonrpc":"2.0","result":69230993,"id":998}[0m
+[2m2025-08-31T04:47:28.921670Z[0m [32m INFO[0m ThreadId(07) [1mhandle_message[0m: [2mbadger::ingest::websocket[0m[2m:[0m Subscription confirmed: request_id=997, subscription_id=69230994 [2m{"jsonrpc":"2.0","result":69230994,"id":997}[0m
+[2m2025-08-31T04:47:28.921713Z[0m [32m INFO[0m ThreadId(07) [1mhandle_message[0m: [2mbadger::ingest::websocket[0m[2m:[0m Subscription confirmed: request_id=996, subscription_id=69230995 [2m{"jsonrpc":"2.0","result":69230995,"id":996}[0m
+[2m2025-08-31T04:47:28.921759Z[0m [32m INFO[0m ThreadId(07) [2mbadger[0m[2m:[0m ✅ Subscription confirmed: 69230993 (request: 998)
+🎯 SUBSCRIPTION CONFIRMED: USDC Account (sub: 69230993, req: 998)
+   📡 This subscription will send program account updates for DEX analysis
+[2m2025-08-31T04:47:28.921778Z[0m [32m INFO[0m ThreadId(07) [2mbadger[0m[2m:[0m ✅ Subscription confirmed: 69230994 (request: 997)
+🎯 SUBSCRIPTION CONFIRMED: Raydium Program (sub: 69230994, req: 997)
+   📡 This subscription will send program account updates for DEX analysis
+[2m2025-08-31T04:47:28.921790Z[0m [32m INFO[0m ThreadId(07) [2mbadger[0m[2m:[0m ✅ Subscription confirmed: 69230995 (request: 996)
+🎯 SUBSCRIPTION CONFIRMED: Jupiter Program (sub: 69230995, req: 996)
+   📡 This subscription will send program account updates for DEX analysis
+[2m2025-08-31T04:47:28.964370Z[0m [32m INFO[0m ThreadId(07) [1mhandle_message[0m: [2mbadger::ingest::websocket[0m[2m:[0m Subscription confirmed: request_id=995, subscription_id=69230996 [2m{"jsonrpc":"2.0","result":69230996,"id":995}[0m
+[2m2025-08-31T04:47:28.964523Z[0m [32m INFO[0m ThreadId(07) [1mhandle_message[0m: [2mbadger::ingest::websocket[0m[2m:[0m Subscription confirmed: request_id=994, subscription_id=69230997 [2m{"jsonrpc":"2.0","result":69230997,"id":994}[0m
+[2m2025-08-31T04:47:28.964592Z[0m [32m INFO[0m ThreadId(07) [1mhandle_message[0m: [2mbadger::ingest::websocket[0m[2m:[0m Subscription confirmed: request_id=993, subscription_id=69230998 [2m{"jsonrpc":"2.0","result":69230998,"id":993}[0m
+[2m2025-08-31T04:47:28.964677Z[0m [32m INFO[0m ThreadId(07) [2mbadger[0m[2m:[0m ✅ Subscription confirmed: 69230996 (request: 995)
+🎯 SUBSCRIPTION CONFIRMED: Orca Program (sub: 69230996, req: 995)
+   📡 This subscription will send program account updates for DEX analysis
+[2m2025-08-31T04:47:28.964716Z[0m [32m INFO[0m ThreadId(07) [2mbadger[0m[2m:[0m ✅ Subscription confirmed: 69230997 (request: 994)
+🎯 SUBSCRIPTION CONFIRMED: SPL Token Program (sub: 69230997, req: 994)
+   📡 This subscription will send program account updates for DEX analysis
+[2m2025-08-31T04:47:28.964750Z[0m [32m INFO[0m ThreadId(07) [2mbadger[0m[2m:[0m ✅ Subscription confirmed: 69230998 (request: 993)
+🎯 SUBSCRIPTION CONFIRMED: Pump.fun Program (sub: 69230998, req: 993)
+   📡 This subscription will send program account updates for DEX analysis

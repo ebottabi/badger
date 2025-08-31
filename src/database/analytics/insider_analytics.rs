@@ -279,8 +279,8 @@ impl InsiderAnalytics {
                 COUNT(*) as total_trades,
                 COUNT(CASE WHEN activity_type = 'BUY' THEN 1 END) as buy_trades,
                 COUNT(CASE WHEN activity_type = 'SELL' THEN 1 END) as sell_trades,
-                COALESCE(SUM(amount * COALESCE(price, 0)), 0) as total_volume,
-                COALESCE(AVG(amount * COALESCE(price, 0)), 0) as avg_trade_size
+                COALESCE(CAST(SUM(amount * COALESCE(price, 0)) AS REAL), 0.0) as total_volume,
+                COALESCE(CAST(AVG(amount * COALESCE(price, 0)) AS REAL), 0.0) as avg_trade_size
             FROM insider_activities 
             WHERE wallet_address = ?
         "#)
@@ -435,9 +435,9 @@ impl InsiderAnalytics {
         let stats = sqlx::query(r#"
             SELECT 
                 COUNT(DISTINCT wallet_address) as insider_count,
-                COALESCE(SUM(amount * COALESCE(price, 0)), 0) as total_volume,
-                COALESCE(SUM(CASE WHEN activity_type = 'BUY' THEN amount * COALESCE(price, 0) ELSE 0 END), 0) as buy_volume,
-                COALESCE(SUM(CASE WHEN activity_type = 'SELL' THEN amount * COALESCE(price, 0) ELSE 0 END), 0) as sell_volume,
+                COALESCE(CAST(SUM(amount * COALESCE(price, 0)) AS REAL), 0.0) as total_volume,
+                COALESCE(CAST(SUM(CASE WHEN activity_type = 'BUY' THEN amount * COALESCE(price, 0) ELSE 0 END) AS REAL), 0.0) as buy_volume,
+                COALESCE(CAST(SUM(CASE WHEN activity_type = 'SELL' THEN amount * COALESCE(price, 0) ELSE 0 END) AS REAL), 0.0) as sell_volume,
                 MIN(timestamp) as first_activity,
                 MAX(timestamp) as last_activity
             FROM insider_activities 
@@ -473,7 +473,7 @@ impl InsiderAnalytics {
             FROM insider_activities 
             WHERE token_mint = ?
             GROUP BY wallet_address 
-            ORDER BY SUM(amount * COALESCE(price, 0)) DESC 
+            ORDER BY CAST(SUM(amount * COALESCE(price, 0)) AS REAL) DESC 
             LIMIT 5
         "#)
         .bind(token_mint)
@@ -486,7 +486,7 @@ impl InsiderAnalytics {
 
         // Detect unusual activity (more than 3x normal volume in last hour)
         let recent_volume = sqlx::query_scalar::<_, f64>(r#"
-            SELECT COALESCE(SUM(amount * COALESCE(price, 0)), 0)
+            SELECT COALESCE(CAST(SUM(amount * COALESCE(price, 0)) AS REAL), 0.0)
             FROM insider_activities 
             WHERE token_mint = ? AND timestamp >= ?
         "#)
@@ -805,7 +805,7 @@ impl InsiderAnalytics {
             FROM insider_activities 
             WHERE wallet_address = ? 
             GROUP BY token_mint 
-            ORDER BY COUNT(*) DESC, SUM(amount * COALESCE(price, 0)) DESC 
+            ORDER BY COUNT(*) DESC, CAST(SUM(amount * COALESCE(price, 0)) AS REAL) DESC 
             LIMIT ?
         "#)
         .bind(wallet_address)

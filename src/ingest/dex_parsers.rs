@@ -2,6 +2,7 @@ use anyhow::{Result, bail};
 use chrono::Utc;
 use serde_json::Value;
 use tracing::{debug, warn};
+use base64;
 
 use crate::core::dex_types::*;
 use crate::core::dex_types::constants::*;
@@ -104,34 +105,14 @@ impl DexEventParser {
                     }
                     _ => {}
                 }
-            } else if let Some(raw_data) = data_obj.get("data") {
-                // Raw account data - try to detect pool structure
+            } else if let Some(_raw_data) = data_obj.get("data") {
+                // Raw account data - cannot reliably extract pool structure without proper parsing
                 if lamports > sol_to_lamports(MIN_POOL_LIQUIDITY_SOL) {
-                    debug!("Potential Raydium pool detected: {} with {:.3} SOL", 
+                    debug!("Raydium account activity detected: {} with {:.3} SOL - insufficient data for pool creation event", 
                         shorten_pubkey(pubkey), lamports_to_sol(lamports));
                     
-                    // Create minimal pool info for raw accounts
-                    let pool = PoolInfo {
-                        address: pubkey.to_string(),
-                        base_mint: "unknown".to_string(),
-                        quote_mint: "unknown".to_string(),
-                        base_vault: "unknown".to_string(),
-                        quote_vault: "unknown".to_string(),
-                        lp_mint: "unknown".to_string(),
-                        market_id: None,
-                        dex: DexType::Raydium,
-                        created_at: Utc::now(),
-                        creator_wallet: "unknown".to_string(),
-                        initial_base_amount: 0,
-                        initial_quote_amount: lamports,
-                        slot,
-                    };
-                    
-                    events.push(MarketEvent::PoolCreated {
-                        pool,
-                        creator: "unknown".to_string(),
-                        initial_liquidity_sol: lamports_to_sol(lamports),
-                    });
+                    // Skip generating events with "unknown" placeholder data
+                    // TODO: Implement proper Raydium AMM account structure parsing
                 }
             }
         }
@@ -145,13 +126,34 @@ impl DexEventParser {
         
         let lamports = account.get("lamports").and_then(|l| l.as_u64()).unwrap_or(0);
         
-        // Jupiter events are typically swap-related, look for significant balance changes
-        if lamports > sol_to_lamports(1.0) { // >1 SOL activity
-            debug!("Jupiter activity detected: {} with {:.3} SOL", 
+        // Parse account data for swap information
+        if let Some(data) = account.get("data").and_then(|d| d.as_array()) {
+            if data.len() >= 2 {
+                if let Some(data_str) = data[0].as_str() {
+                    // Decode base64 account data
+                    if let Ok(decoded_data) = base64::decode(data_str) {
+                        // Attempt to parse Jupiter swap data from account
+                        // NOTE: This is inherently limited because account changes don't contain
+                        // the full transaction context needed for accurate swap parsing
+                        if let Ok(swap_info) = Self::parse_jupiter_account_data(&decoded_data, pubkey, slot, lamports) {
+                            // Only generate events if we have meaningful token information
+                            if swap_info.token_out != "UNKNOWN" && swap_info.amount_out > 0 {
+                                debug!("⚡ Jupiter swap parsed from account data: {} -> {} by {}", 
+                                       swap_info.token_in, swap_info.token_out, shorten_pubkey(&swap_info.wallet));
+                                events.push(MarketEvent::SwapDetected { swap: swap_info });
+                            } else {
+                                debug!("⚠️ Jupiter account activity detected but swap details incomplete - skipping");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Only log detected activity without generating fake events
+        if lamports > sol_to_lamports(1.0) && events.is_empty() {
+            debug!("Jupiter activity detected but cannot parse swap details: {} with {:.3} SOL - skipping event generation", 
                 shorten_pubkey(pubkey), lamports_to_sol(lamports));
-            
-            // For now, we'll detect this as general swap activity
-            // In production, you'd parse the actual instruction data
         }
         
         Ok(events)
@@ -344,4 +346,66 @@ pub mod instruction_parsers {
         // Parse Jupiter aggregator route
         bail!("Jupiter swap parsing not implemented")
     }
+}
+
+impl DexEventParser {
+    /// Parse Jupiter account data to extract swap information
+    /// 
+    /// LIMITATION: Account-level data doesn't contain complete swap information.
+    /// For accurate Jupiter swap detection, we need to:
+    /// 1. Subscribe to transaction notifications (not just account changes)
+    /// 2. Parse Jupiter instruction data from transactions
+    /// 3. Extract swap details from instruction parameters
+    /// 
+    /// This function exists as a fallback but will often fail to extract meaningful data.
+    fn parse_jupiter_account_data(data: &[u8], pubkey: &str, slot: u64, lamports: u64) -> Result<SwapEvent> {
+        
+        // Look for token addresses in the account data (very basic approach)
+        let token_out = Self::extract_token_from_data(data).unwrap_or_else(|| "UNKNOWN".to_string());
+        
+        Ok(SwapEvent {
+            signature: format!("jupiter_swap_{}_{}", pubkey, slot),
+            slot,
+            swap_type: SwapType::Buy,
+            token_in: "11111111111111111111111111111112".to_string(), // SOL
+            token_out,
+            amount_in: lamports,
+            amount_out: 0, // Would need to calculate from account changes
+            wallet: pubkey.to_string(), // In real parsing, this would be the signer
+            dex: DexType::Jupiter,
+            price_impact: None,
+            timestamp: Utc::now(),
+        })
+    }
+    
+    /// Extract wallet address from account context
+    fn extract_wallet_from_context(account: &serde_json::Map<String, Value>) -> Option<String> {
+        // Try to find the wallet/signer in the account data
+        // This is simplified - real implementation would parse transaction context
+        account.get("owner").and_then(|o| o.as_str()).map(|s| s.to_string())
+    }
+    
+    /// Extract token address from raw account data (simplified)
+    fn extract_token_from_data(data: &[u8]) -> Option<String> {
+        // This is a very simplified token extraction
+        // In production, you'd parse the actual Jupiter account structure
+        if data.len() >= 32 {
+            // Look for 32-byte sequences that might be token addresses
+            let potential_token = &data[0..32];
+            if potential_token.iter().any(|&b| b != 0) {
+                return Some(bs58::encode(potential_token).into_string());
+            }
+        }
+        None
+    }
+    
+    // Placeholder parsing functions removed to prevent generation of fake events.
+    // 
+    // For proper DEX swap detection, we need:
+    // 1. Transaction-level parsing (not account-level)  
+    // 2. Instruction data analysis
+    // 3. Program-specific account structure knowledge
+    //
+    // Account change notifications don't contain sufficient context for accurate 
+    // swap reconstruction, leading to placeholder/fake events with "UNKNOWN" tokens.
 }

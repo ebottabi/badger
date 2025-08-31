@@ -310,12 +310,12 @@ impl PositionTracker {
                 COUNT(*) as total_positions,
                 SUM(CASE WHEN status = 'OPEN' THEN 1 ELSE 0 END) as open_positions,
                 SUM(CASE WHEN status = 'CLOSED' THEN 1 ELSE 0 END) as closed_positions,
-                COALESCE(SUM(CASE WHEN status = 'CLOSED' THEN pnl ELSE 0 END), 0) as total_pnl,
-                COALESCE(SUM(fees), 0) as total_fees,
-                COALESCE(AVG(CASE WHEN status = 'CLOSED' AND exit_timestamp IS NOT NULL 
-                    THEN exit_timestamp - entry_timestamp ELSE NULL END), 0) as avg_hold_time,
-                COALESCE(MAX(CASE WHEN status = 'CLOSED' THEN pnl ELSE NULL END), 0) as best_trade,
-                COALESCE(MIN(CASE WHEN status = 'CLOSED' THEN pnl ELSE NULL END), 0) as worst_trade
+                COALESCE(CAST(SUM(CASE WHEN status = 'CLOSED' THEN pnl ELSE 0 END) AS REAL), 0.0) as total_pnl,
+                COALESCE(CAST(SUM(fees) AS REAL), 0.0) as total_fees,
+                COALESCE(CAST(AVG(CASE WHEN status = 'CLOSED' AND exit_timestamp IS NOT NULL 
+                    THEN exit_timestamp - entry_timestamp ELSE NULL END) AS REAL), 0.0) as avg_hold_time,
+                COALESCE(CAST(MAX(CASE WHEN status = 'CLOSED' THEN pnl ELSE NULL END) AS REAL), 0.0) as best_trade,
+                COALESCE(CAST(MIN(CASE WHEN status = 'CLOSED' THEN pnl ELSE NULL END) AS REAL), 0.0) as worst_trade
             FROM positions
         "#)
         .fetch_one(self.db.get_pool())

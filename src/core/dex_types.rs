@@ -210,6 +210,10 @@ pub enum TradingSignal {
         max_amount_sol: f64,
         reason: String,
         source: SignalSource,
+        // Additional fields for copy trading
+        amount_sol: Option<f64>,
+        max_slippage: Option<f64>,
+        metadata: Option<String>,
     },
     /// Sell signal with targets
     Sell {
@@ -217,6 +221,11 @@ pub enum TradingSignal {
         price_target: f64,
         stop_loss: f64,
         reason: String,
+        // Additional fields for copy trading  
+        amount_tokens: Option<f64>,
+        min_price: Option<f64>,
+        source: Option<SignalSource>,
+        metadata: Option<String>,
     },
     /// General swap activity detected
     SwapActivity {
@@ -278,7 +287,7 @@ impl TradingSignal {
     pub fn get_source(&self) -> SignalSource {
         match self {
             TradingSignal::Buy { source, .. } => *source,
-            TradingSignal::Sell { .. } => SignalSource::NewPool, // Default source for sell signals
+            TradingSignal::Sell { source, .. } => source.unwrap_or(SignalSource::NewPool), // Default source for sell signals
             TradingSignal::SwapActivity { .. } => SignalSource::VolumeSpike, // Default source for activity signals
         }
     }
@@ -288,6 +297,7 @@ impl TradingSignal {
 pub enum SignalSource {
     NewPool,
     InsiderWallet,
+    InsiderCopy,     // Copy trading from insider wallets
     VolumeSpike,
     LiquidityAdd,
 }

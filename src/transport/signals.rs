@@ -390,7 +390,7 @@ impl From<crate::core::TradingSignal> for EnhancedTradingSignal {
         let signal_id = EnhancedTradingSignal::generate_signal_id();
         
         match signal {
-            crate::core::TradingSignal::Buy { token_mint, confidence, max_amount_sol, reason, source } => {
+            crate::core::TradingSignal::Buy { token_mint, confidence, max_amount_sol, reason, source, .. } => {
                 EnhancedTradingSignal::Buy {
                     token_mint,
                     confidence,
@@ -411,7 +411,7 @@ impl From<crate::core::TradingSignal> for EnhancedTradingSignal {
                     signal_id,
                 }
             }
-            crate::core::TradingSignal::Sell { token_mint, price_target, stop_loss, reason } => {
+            crate::core::TradingSignal::Sell { token_mint, price_target, stop_loss, reason, .. } => {
                 EnhancedTradingSignal::Sell {
                     token_mint,
                     position_size_sol: 0.0, // Unknown from basic signal

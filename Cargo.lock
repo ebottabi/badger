@@ -588,6 +588,7 @@ dependencies = [
 name = "badger"
 version = "0.1.0"
 dependencies = [
+ "ahash 0.8.12",
  "anchor-client",
  "anyhow",
  "base64 0.21.7",
@@ -595,9 +596,13 @@ dependencies = [
  "borsh 0.10.4",
  "bs58 0.5.1",
  "chrono",
+ "crossbeam",
  "dashmap",
  "futures-util",
+ "hex",
+ "memmap2 0.9.8",
  "rand 0.8.5",
+ "rayon",
  "reqwest",
  "serde",
  "serde_json",
@@ -616,6 +621,7 @@ dependencies = [
  "tracing-subscriber",
  "url",
  "uuid",
+ "xxhash-rust",
 ]
 
 [[package]]
@@ -1110,6 +1116,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9481c1c90cbf2ac953f07c8d4a58aa3945c425b7185c9154d67a65e4230da511"
 dependencies = [
  "cfg-if",
+]
+
+[[package]]
+name = "crossbeam"
+version = "0.8.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1137cd7e7fc0fb5d3c5a8678be38ec56e819125d8d7907411fe24ccb943faca8"
+dependencies = [
+ "crossbeam-channel",
+ "crossbeam-deque",
+ "crossbeam-epoch",
+ "crossbeam-queue",
+ "crossbeam-utils",
 ]
 
 [[package]]
@@ -2380,6 +2399,15 @@ name = "memmap2"
 version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "83faa42c0a078c393f6b29d5db232d8be22776a891f8f56e5284faee4a20b327"
+dependencies = [
+ "libc",
+]
+
+[[package]]
+name = "memmap2"
+version = "0.9.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "843a98750cd611cc2965a8213b53b43e715f13c37a9e096c6408e69990961db7"
 dependencies = [
  "libc",
 ]
@@ -3934,7 +3962,7 @@ dependencies = [
  "im",
  "lazy_static",
  "log",
- "memmap2",
+ "memmap2 0.5.10",
  "once_cell",
  "rand_core 0.6.4",
  "rustc_version",
@@ -4296,7 +4324,7 @@ dependencies = [
  "lazy_static",
  "libsecp256k1",
  "log",
- "memmap2",
+ "memmap2 0.5.10",
  "num-derive 0.3.3",
  "num-traits",
  "num_enum 0.6.1",
@@ -6172,6 +6200,12 @@ dependencies = [
  "thiserror",
  "time",
 ]
+
+[[package]]
+name = "xxhash-rust"
+version = "0.8.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fdd20c5420375476fbd4394763288da7eb0cc0b8c11deed431a91562af7335d3"
 
 [[package]]
 name = "yasna"

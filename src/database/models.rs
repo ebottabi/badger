@@ -52,7 +52,7 @@ impl BadgerDatabase {
 
         let db = Self { pool };
 
-        // Run database migrations
+        // Run minimal model initialization (session setup only)
         db.run_migrations().await?;
 
         tracing::info!("✅ BadgerDatabase connected to: {}", database_url);
@@ -60,144 +60,21 @@ impl BadgerDatabase {
     }
 
     /// Run database migrations to create tables and indexes
+    /// DISABLED: Now using comprehensive migration system from migrations/ directory
     async fn run_migrations(&self) -> Result<(), super::DatabaseError> {
-        tracing::info!("🔄 Running database migrations");
-
-        // Create trades table
-        sqlx::query(r#"
-            CREATE TABLE IF NOT EXISTS trades (
-                id TEXT PRIMARY KEY,
-                token_mint TEXT NOT NULL,
-                token_symbol TEXT,
-                trade_type TEXT NOT NULL CHECK (trade_type IN ('buy', 'sell')),
-                amount_sol REAL NOT NULL,
-                executed_at INTEGER NOT NULL,
-                status TEXT NOT NULL CHECK (status IN ('executed', 'failed', 'pending')),
-                transaction_signature TEXT,
-                profit_loss REAL DEFAULT 0.0,
-                gas_fee REAL,
-                slippage REAL,
-                created_at INTEGER DEFAULT (strftime('%s', 'now'))
-            )
-        "#).execute(&self.pool).await
-            .map_err(|e| super::DatabaseError::QueryError(format!("Failed to create trades table: {}", e)))?;
-
-        // Create market_events table
-        sqlx::query(r#"
-            CREATE TABLE IF NOT EXISTS market_events (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                event_id TEXT UNIQUE NOT NULL,
-                event_type TEXT NOT NULL,
-                timestamp INTEGER NOT NULL,
-                slot INTEGER,
-                data TEXT NOT NULL,
-                processed_at INTEGER NOT NULL,
-                created_at INTEGER DEFAULT (strftime('%s', 'now'))
-            )
-        "#).execute(&self.pool).await
-            .map_err(|e| super::DatabaseError::QueryError(format!("Failed to create market_events table: {}", e)))?;
-
-        // Create trading_signals table
-        sqlx::query(r#"
-            CREATE TABLE IF NOT EXISTS trading_signals (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                signal_id TEXT UNIQUE NOT NULL,
-                signal_type TEXT NOT NULL,
-                token_mint TEXT NOT NULL,
-                confidence REAL,
-                amount_sol REAL,
-                reason TEXT,
-                timestamp INTEGER NOT NULL,
-                data TEXT NOT NULL,
-                created_at INTEGER DEFAULT (strftime('%s', 'now'))
-            )
-        "#).execute(&self.pool).await
-            .map_err(|e| super::DatabaseError::QueryError(format!("Failed to create trading_signals table: {}", e)))?;
-
-        // Create wallet_scores table
-        sqlx::query(r#"
-            CREATE TABLE IF NOT EXISTS wallet_scores (
-                wallet_address TEXT PRIMARY KEY,
-                composite_score REAL DEFAULT 0.0,
-                insider_score REAL DEFAULT 0.0,
-                activity_score REAL DEFAULT 0.0,
-                performance_score REAL DEFAULT 0.0,
-                total_trades INTEGER DEFAULT 0,
-                successful_trades INTEGER DEFAULT 0,
-                total_volume_sol REAL DEFAULT 0.0,
-                first_seen INTEGER NOT NULL,
-                last_updated INTEGER NOT NULL
-            )
-        "#).execute(&self.pool).await
-            .map_err(|e| super::DatabaseError::QueryError(format!("Failed to create wallet_scores table: {}", e)))?;
-
-        // Create session_stats table
-        sqlx::query(r#"
-            CREATE TABLE IF NOT EXISTS session_stats (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                session_start INTEGER NOT NULL,
-                total_market_events INTEGER DEFAULT 0,
-                total_trading_signals INTEGER DEFAULT 0,
-                unique_wallets INTEGER DEFAULT 0,
-                database_operations INTEGER DEFAULT 0,
-                uptime_seconds INTEGER DEFAULT 0,
-                updated_at INTEGER DEFAULT (strftime('%s', 'now'))
-            )
-        "#).execute(&self.pool).await
-            .map_err(|e| super::DatabaseError::QueryError(format!("Failed to create session_stats table: {}", e)))?;
-
-        // Create analytics table
-        sqlx::query(r#"
-            CREATE TABLE IF NOT EXISTS analytics (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                session_start INTEGER NOT NULL,
-                total_pnl REAL DEFAULT 0.0,
-                win_rate REAL DEFAULT 0.0,
-                total_trades INTEGER DEFAULT 0,
-                winning_trades INTEGER DEFAULT 0,
-                losing_trades INTEGER DEFAULT 0,
-                sharpe_ratio REAL DEFAULT 0.0,
-                max_drawdown REAL DEFAULT 0.0,
-                current_portfolio_value REAL DEFAULT 0.0,
-                calculated_at INTEGER NOT NULL
-            )
-        "#).execute(&self.pool).await
-            .map_err(|e| super::DatabaseError::QueryError(format!("Failed to create analytics table: {}", e)))?;
-
-        // Create indexes for better performance
-        let indexes = vec![
-            "CREATE INDEX IF NOT EXISTS idx_market_events_timestamp ON market_events(timestamp)",
-            "CREATE INDEX IF NOT EXISTS idx_market_events_type ON market_events(event_type)",
-            "CREATE INDEX IF NOT EXISTS idx_trading_signals_timestamp ON trading_signals(timestamp)",
-            "CREATE INDEX IF NOT EXISTS idx_trading_signals_token ON trading_signals(token_mint)",
-            "CREATE INDEX IF NOT EXISTS idx_wallet_scores_composite ON wallet_scores(composite_score DESC)",
-            "CREATE INDEX IF NOT EXISTS idx_wallet_scores_updated ON wallet_scores(last_updated)",
-            "CREATE INDEX IF NOT EXISTS idx_trades_executed_at ON trades(executed_at)",
-            "CREATE INDEX IF NOT EXISTS idx_trades_token_mint ON trades(token_mint)",
-        ];
-
-        for index_sql in indexes {
-            sqlx::query(index_sql).execute(&self.pool).await
-                .map_err(|e| super::DatabaseError::QueryError(format!("Failed to create index: {}", e)))?;
-        }
-
-        // Initialize session if not exists
-        self.initialize_session().await?;
-
-        tracing::info!("✅ Database migrations completed successfully");
+        tracing::info!("🔄 Skipping old model-based migrations (using migration files)");
+        
+        // Session initialization will be handled after main migrations complete
+        tracing::info!("✅ Model initialization completed successfully");
         Ok(())
     }
 
     /// Initialize a new session
-    async fn initialize_session(&self) -> Result<(), super::DatabaseError> {
-        let session_start = Utc::now().timestamp();
-        
+    pub async fn initialize_session(&self) -> Result<(), super::DatabaseError> {
+        // Initialize session using the migration schema columns
         sqlx::query(r#"
-            INSERT OR REPLACE INTO session_stats 
-            (id, session_start, total_market_events, total_trading_signals, unique_wallets, database_operations, uptime_seconds)
-            VALUES (1, ?, 0, 0, 0, 0, 0)
+            INSERT OR IGNORE INTO session_stats (id) VALUES (1)
         "#)
-        .bind(session_start)
         .execute(&self.pool).await
         .map_err(|e| super::DatabaseError::QueryError(format!("Failed to initialize session: {}", e)))?;
 
@@ -235,9 +112,8 @@ impl BadgerDatabase {
         // Update session stats
         sqlx::query(r#"
             UPDATE session_stats 
-            SET total_market_events = total_market_events + 1, 
-                database_operations = database_operations + 1,
-                updated_at = strftime('%s', 'now')
+            SET events_processed = events_processed + 1, 
+                last_updated = strftime('%s', 'now')
             WHERE id = 1
         "#)
         .execute(&self.pool).await
@@ -286,9 +162,8 @@ impl BadgerDatabase {
         // Update session stats
         sqlx::query(r#"
             UPDATE session_stats 
-            SET total_trading_signals = total_trading_signals + 1,
-                database_operations = database_operations + 1,
-                updated_at = strftime('%s', 'now')
+            SET signals_generated = signals_generated + 1,
+                last_updated = strftime('%s', 'now')
             WHERE id = 1
         "#)
         .execute(&self.pool).await
@@ -327,8 +202,8 @@ impl BadgerDatabase {
     /// Get session statistics
     pub async fn get_session_stats(&self) -> Result<SessionStats, super::DatabaseError> {
         let row = sqlx::query_as::<_, SessionStats>(r#"
-            SELECT session_start, total_market_events, total_trading_signals, 
-                   unique_wallets, database_operations, uptime_seconds
+            SELECT session_start, events_processed, signals_generated, 
+                   trades_executed, total_pnl, last_updated
             FROM session_stats WHERE id = 1
         "#)
         .fetch_one(&self.pool).await
@@ -403,7 +278,7 @@ impl BadgerDatabase {
         let session_stats = self.get_session_stats().await?;
 
         // Calculate basic analytics (would be more complex with real trading data)
-        let total_trades = session_stats.total_trading_signals as u32;
+        let total_trades = session_stats.signals_generated as u32;
         let winning_trades = ((total_trades as f32) * 0.7) as u32; // Mock 70% win rate
         let losing_trades = total_trades - winning_trades;
         let win_rate = if total_trades > 0 { winning_trades as f64 / total_trades as f64 } else { 0.0 };
@@ -471,12 +346,11 @@ impl BadgerDatabase {
         }))
     }
 
-    /// Update session uptime
+    /// Update session uptime (now just updates last_updated timestamp)
     pub async fn update_uptime(&self) -> Result<(), super::DatabaseError> {
         sqlx::query(r#"
             UPDATE session_stats 
-            SET uptime_seconds = (strftime('%s', 'now') - session_start),
-                updated_at = strftime('%s', 'now')
+            SET last_updated = strftime('%s', 'now')
             WHERE id = 1
         "#)
         .execute(&self.pool).await
@@ -523,11 +397,11 @@ impl BadgerDatabase {
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct SessionStats {
     pub session_start: i64,
-    pub total_market_events: i64,
-    pub total_trading_signals: i64,
-    pub unique_wallets: i64,
-    pub database_operations: i64,
-    pub uptime_seconds: i64,
+    pub events_processed: i64,
+    pub signals_generated: i64,
+    pub trades_executed: i64,
+    pub total_pnl: f64,
+    pub last_updated: i64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]

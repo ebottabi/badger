@@ -13,11 +13,13 @@ pub mod batch;
 pub mod validation;
 pub mod cleanup;
 pub mod analytics;
+pub mod migrations;
 
 pub use models::*;
 pub use services::*;
 pub use batch::*;
 pub use validation::*;
+pub use migrations::*;
 pub use cleanup::*;
 pub use analytics::*;
 
@@ -54,6 +56,8 @@ impl DatabaseManager {
 
         // Initialize SQLite database with enhanced configuration
         let db = Arc::new(BadgerDatabase::new("sqlite:data/badger.db").await?);
+
+        // Session will be initialized after migrations complete in main.rs
 
         // Create enhanced persistence service for high-performance batch processing
         self.enhanced_persistence = Some(EnhancedPersistenceService::new(db.clone()));

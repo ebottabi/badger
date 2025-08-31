@@ -1,0 +1,738 @@
+   Compiling badger v0.1.0 (/Users/ebot/personal/badger)
+warning: unused import: `anyhow::Result`
+ --> src/core/dex_types.rs:1:5
+  |
+1 | use anyhow::Result;
+  |     ^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `solana_sdk::pubkey::Pubkey`
+ --> src/core/dex_types.rs:4:5
+  |
+4 | use solana_sdk::pubkey::Pubkey;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `Path`
+  --> src/core/wallet_management.rs:13:17
+   |
+13 | use std::path::{Path, PathBuf};
+   |                 ^^^^
+
+warning: unused import: `error`
+  --> src/core/wallet_management.rs:14:27
+   |
+14 | use tracing::{info, warn, error, debug};
+   |                           ^^^^^
+
+warning: unused import: `warn`
+ --> src/ingest/dex_parsers.rs:4:22
+  |
+4 | use tracing::{debug, warn};
+  |                      ^^^^
+
+warning: unused import: `error`
+ --> src/transport/enhanced_bus.rs:3:28
+  |
+3 | use tracing::{debug, warn, error, instrument};
+  |                            ^^^^^
+
+warning: unused import: `error`
+ --> src/transport/routing.rs:5:28
+  |
+5 | use tracing::{debug, warn, error, instrument};
+  |                            ^^^^^
+
+warning: unused import: `EnhancedTradingSignal`
+  --> src/transport/routing.rs:10:72
+   |
+10 | use crate::transport::{EnhancedTransportBus, WalletEvent, SystemAlert, EnhancedTradingSignal};
+   |                                                                        ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::collections::VecDeque`
+ --> src/database/mod.rs:1:5
+  |
+1 | use std::collections::VecDeque;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `Duration` and `Instant`
+ --> src/database/mod.rs:3:17
+  |
+3 | use std::time::{Duration, Instant};
+  |                 ^^^^^^^^  ^^^^^^^
+
+warning: unused imports: `Mutex` and `broadcast`
+ --> src/database/mod.rs:4:19
+  |
+4 | use tokio::sync::{broadcast, Mutex};
+  |                   ^^^^^^^^^  ^^^^^
+
+warning: unused imports: `debug`, `instrument`, and `warn`
+ --> src/database/mod.rs:5:21
+  |
+5 | use tracing::{info, warn, error, debug, instrument};
+  |                     ^^^^         ^^^^^  ^^^^^^^^^^
+
+warning: unused imports: `MarketEvent` and `TradingSignal`
+ --> src/database/mod.rs:7:19
+  |
+7 | use crate::core::{MarketEvent, TradingSignal};
+  |                   ^^^^^^^^^^^  ^^^^^^^^^^^^^
+
+warning: unused imports: `SystemAlert` and `WalletEvent`
+ --> src/database/mod.rs:8:63
+  |
+8 | use crate::transport::{EnhancedTransportBus, ServiceRegistry, WalletEvent, SystemAlert};
+  |                                                               ^^^^^^^^^^^  ^^^^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/database/models.rs:3:5
+  |
+3 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `DateTime`
+ --> src/database/models.rs:5:14
+  |
+5 | use chrono::{DateTime, Utc};
+  |              ^^^^^^^^
+
+warning: unused import: `Instant`
+ --> src/database/services.rs:2:27
+  |
+2 | use std::time::{Duration, Instant};
+  |                           ^^^^^^^
+
+warning: unused import: `tokio::sync::broadcast`
+ --> src/database/services.rs:3:5
+  |
+3 | use tokio::sync::broadcast;
+  |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `error`
+ --> src/database/services.rs:4:27
+  |
+4 | use tracing::{info, warn, error, debug, instrument};
+  |                           ^^^^^
+
+warning: unused imports: `SystemAlert` and `WalletEvent`
+ --> src/database/services.rs:7:63
+  |
+7 | use crate::transport::{EnhancedTransportBus, ServiceRegistry, WalletEvent, SystemAlert};
+  |                                                               ^^^^^^^^^^^  ^^^^^^^^^^^
+
+warning: unused import: `AnalyticsData`
+  --> src/database/services.rs:10:37
+   |
+10 | use super::models::{BadgerDatabase, AnalyticsData, WalletScore};
+   |                                     ^^^^^^^^^^^^^
+
+warning: unused import: `warn`
+ --> src/database/batch.rs:7:28
+  |
+7 | use tracing::{debug, info, warn, error, instrument};
+  |                            ^^^^
+
+warning: unused import: `warn`
+ --> src/database/validation.rs:4:22
+  |
+4 | use tracing::{debug, warn, error};
+  |                      ^^^^
+
+warning: unused import: `Path`
+ --> src/database/cleanup.rs:1:17
+  |
+1 | use std::path::{Path, PathBuf};
+  |                 ^^^^
+
+warning: unused import: `DateTime`
+ --> src/database/analytics/position_tracker.rs:3:14
+  |
+3 | use chrono::{DateTime, Utc};
+  |              ^^^^^^^^
+
+warning: unused imports: `debug` and `error`
+ --> src/database/analytics/position_tracker.rs:6:15
+  |
+6 | use tracing::{debug, info, warn, error, instrument};
+  |               ^^^^^              ^^^^^
+
+warning: unused import: `MarketEvent`
+ --> src/database/analytics/position_tracker.rs:8:19
+  |
+8 | use crate::core::{MarketEvent, TradingSignal};
+  |                   ^^^^^^^^^^^
+
+warning: unused import: `DateTime`
+ --> src/database/analytics/pnl_calculator.rs:3:14
+  |
+3 | use chrono::{DateTime, Utc};
+  |              ^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+ --> src/database/analytics/pnl_calculator.rs:6:28
+  |
+6 | use tracing::{debug, info, warn, error, instrument};
+  |                            ^^^^  ^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src/database/analytics/performance_tracker.rs:1:5
+  |
+1 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `DateTime` and `Duration`
+ --> src/database/analytics/performance_tracker.rs:3:14
+  |
+3 | use chrono::{DateTime, Utc, Duration};
+  |              ^^^^^^^^       ^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+ --> src/database/analytics/performance_tracker.rs:6:28
+  |
+6 | use tracing::{debug, info, warn, error, instrument};
+  |                            ^^^^  ^^^^^
+
+warning: unused import: `PortfolioPnL`
+ --> src/database/analytics/performance_tracker.rs:9:44
+  |
+9 | use super::pnl_calculator::{PnLCalculator, PortfolioPnL};
+  |                                            ^^^^^^^^^^^^
+
+warning: unused import: `DateTime`
+ --> src/database/analytics/insider_analytics.rs:3:14
+  |
+3 | use chrono::{DateTime, Utc};
+  |              ^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+ --> src/database/analytics/insider_analytics.rs:6:28
+  |
+6 | use tracing::{debug, info, warn, error, instrument};
+  |                            ^^^^  ^^^^^
+
+warning: unused imports: `MarketEvent` and `TradingSignal`
+  --> src/database/analytics/insider_analytics.rs:10:19
+   |
+10 | use crate::core::{MarketEvent, TradingSignal};
+   |                   ^^^^^^^^^^^  ^^^^^^^^^^^^^
+
+warning: unexpected `cfg` condition value: `reset-db`
+   --> src/database/migrations.rs:362:11
+    |
+362 |     #[cfg(feature = "reset-db")]
+    |           ^^^^^^^^^^^^^^^^^^^^ help: remove the condition
+    |
+    = note: no expected values for `feature`
+    = help: consider adding `reset-db` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unused import: `std::collections::HashMap`
+  --> src/intelligence/insider_detector.rs:10:5
+   |
+10 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `error` and `warn`
+  --> src/intelligence/insider_detector.rs:13:28
+   |
+13 | use tracing::{info, debug, warn, error, instrument};
+   |                            ^^^^  ^^^^^
+
+warning: unused imports: `error` and `warn`
+  --> src/intelligence/performance_tracker.rs:15:28
+   |
+15 | use tracing::{info, debug, warn, error, instrument};
+   |                            ^^^^  ^^^^^
+
+warning: unused import: `std::sync::atomic::AtomicU64`
+ --> src/intelligence/types.rs:3:5
+  |
+3 | use std::sync::atomic::AtomicU64;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `DateTime` and `Utc`
+ --> src/intelligence/types.rs:4:14
+  |
+4 | use chrono::{DateTime, Utc};
+  |              ^^^^^^^^  ^^^
+
+warning: unused import: `File`
+ --> src/intelligence/mmap_db.rs:8:15
+  |
+8 | use std::fs::{File, OpenOptions};
+  |               ^^^^
+
+warning: unused import: `xxhash_rust::xxh64::xxh64`
+  --> src/intelligence/mmap_db.rs:10:5
+   |
+10 | use xxhash_rust::xxh64::xxh64;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `debug`, `error`, and `warn`
+  --> src/intelligence/mmap_db.rs:11:21
+   |
+11 | use tracing::{info, debug, warn, error};
+   |                     ^^^^^  ^^^^  ^^^^^
+
+warning: unused import: `std::collections::HashMap`
+  --> src/trading/jupiter_client.rs:10:5
+   |
+10 | use std::collections::HashMap;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::intelligence::SignalUrgency`
+  --> src/trading/execution_engine.rs:14:5
+   |
+14 | use crate::intelligence::SignalUrgency;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `base64::encode`: Use Engine::encode
+   --> src/core/wallet_management.rs:292:20
+    |
+292 |         Ok(base64::encode(encrypted))
+    |                    ^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated function `base64::decode`: Use Engine::decode
+   --> src/core/wallet_management.rs:303:39
+    |
+303 |         let encrypted_bytes = base64::decode(encrypted_key)
+    |                                       ^^^^^^
+
+warning: use of deprecated function `base64::decode`: Use Engine::decode
+   --> src/ingest/dex_parsers.rs:134:55
+    |
+134 |                     if let Ok(decoded_data) = base64::decode(data_str) {
+    |                                                       ^^^^^^
+
+warning: use of deprecated function `base64::decode`: Use Engine::decode
+   --> src/trading/jupiter_client.rs:505:41
+    |
+505 |         let transaction_bytes = base64::decode(&swap_response.swap_transaction)
+    |                                         ^^^^^^
+
+warning: unreachable statement
+   --> src/database/analytics/performance_tracker.rs:104:9
+    |
+101 |           return Ok(());
+    |           ------------- any code following this expression is unreachable
+...
+104 | /         let _create_performance_snapshots = r#"
+105 | |             CREATE TABLE IF NOT EXISTS performance_snapshots (
+106 | |                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+107 | |                 period_type TEXT NOT NULL CHECK (period_type IN ('HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY')),
+...   |
+133 | |         "#;
+    | |___________^ unreachable statement
+    |
+    = note: `#[warn(unreachable_code)]` on by default
+
+warning: unused variable: `create_signal_performance`
+   --> src/database/analytics/performance_tracker.rs:135:13
+    |
+135 |         let create_signal_performance = r#"
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_signal_performance`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `create_trading_sessions`
+   --> src/database/analytics/performance_tracker.rs:154:13
+    |
+154 |         let create_trading_sessions = r#"
+    |             ^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_trading_sessions`
+
+warning: unused variable: `create_indexes`
+   --> src/database/analytics/performance_tracker.rs:173:13
+    |
+173 |         let create_indexes = vec![
+    |             ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_indexes`
+
+warning: unreachable statement
+  --> src/intelligence/insider_detector.rs:36:9
+   |
+33 |           return Ok(());
+   |           ------------- any code following this expression is unreachable
+...
+36 | /         let _create_insider_wallets_table = r#"
+37 | |             CREATE TABLE IF NOT EXISTS insider_wallets (
+38 | |                 address TEXT PRIMARY KEY,
+39 | |                 confidence_score REAL NOT NULL,
+...  |
+55 | |         "#;
+   | |___________^ unreachable statement
+
+warning: unused variable: `create_wallet_trade_analysis_table`
+  --> src/intelligence/insider_detector.rs:57:13
+   |
+57 |         let create_wallet_trade_analysis_table = r#"
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_wallet_trade_analysis_table`
+
+warning: unused variable: `create_wallet_discovery_log_table`
+  --> src/intelligence/insider_detector.rs:79:13
+   |
+79 |         let create_wallet_discovery_log_table = r#"
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_wallet_discovery_log_table`
+
+warning: unused variable: `create_indexes`
+  --> src/intelligence/insider_detector.rs:94:13
+   |
+94 |         let create_indexes = vec![
+   |             ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_create_indexes`
+
+warning: variable `total_profit` is assigned to, but never used
+   --> src/intelligence/insider_detector.rs:501:17
+    |
+501 |         let mut total_profit = 0.0f64;
+    |                 ^^^^^^^^^^^^
+    |
+    = note: consider using `_total_profit` instead
+
+warning: use of deprecated method `chrono::NaiveDateTime::timestamp`: use `.and_utc().timestamp()` instead
+   --> src/intelligence/copy_trader.rs:421:81
+    |
+421 |         let today_start = Utc::now().date_naive().and_hms_opt(0, 0, 0).unwrap().timestamp();
+    |                                                                                 ^^^^^^^^^
+
+warning: use of deprecated method `chrono::NaiveDateTime::timestamp`: use `.and_utc().timestamp()` instead
+   --> src/intelligence/copy_trader.rs:443:81
+    |
+443 |         let today_start = Utc::now().date_naive().and_hms_opt(0, 0, 0).unwrap().timestamp();
+    |                                                                                 ^^^^^^^^^
+
+warning: unused variable: `result_str`
+   --> src/intelligence/background_sync.rs:277:13
+    |
+277 |         let result_str = match result.result {
+    |             ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_result_str`
+
+warning: unused variable: `exit_reason_str`
+   --> src/intelligence/background_sync.rs:283:13
+    |
+283 |         let exit_reason_str = match result.exit_reason {
+    |             ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_exit_reason_str`
+
+warning: unused variable: `recent_cutoff`
+   --> src/intelligence/performance_tracker.rs:213:13
+    |
+213 |         let recent_cutoff = Utc::now().timestamp() - (self.config.recent_performance_days as i64 * 24 * 3600);
+    |             ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_recent_cutoff`
+
+warning: unused variable: `wins`
+   --> src/intelligence/performance_tracker.rs:500:17
+    |
+500 |             let wins: i64 = performer.try_get("wins").unwrap_or(0);
+    |                 ^^^^ help: if this is intentional, prefix it with an underscore: `_wins`
+
+warning: use of deprecated method `chrono::DateTime::<Tz>::timestamp_nanos`: use `timestamp_nanos_opt()` instead
+   --> src/core/dex_types.rs:155:85
+    |
+155 |                 format!("liquidity_changed_{}_{}", pool_address, chrono::Utc::now().timestamp_nanos())
+    |                                                                                     ^^^^^^^^^^^^^^^
+
+warning: use of deprecated method `chrono::DateTime::<Tz>::timestamp_nanos`: use `timestamp_nanos_opt()` instead
+   --> src/core/dex_types.rs:243:69
+    |
+243 |                 format!("buy_{}_{}", token_mint, chrono::Utc::now().timestamp_nanos())
+    |                                                                     ^^^^^^^^^^^^^^^
+
+warning: use of deprecated method `chrono::DateTime::<Tz>::timestamp_nanos`: use `timestamp_nanos_opt()` instead
+   --> src/core/dex_types.rs:246:70
+    |
+246 |                 format!("sell_{}_{}", token_mint, chrono::Utc::now().timestamp_nanos())
+    |                                                                      ^^^^^^^^^^^^^^^
+
+warning: use of deprecated method `chrono::DateTime::<Tz>::timestamp_nanos`: use `timestamp_nanos_opt()` instead
+   --> src/core/dex_types.rs:249:70
+    |
+249 |                 format!("swap_{}_{}", token_mint, chrono::Utc::now().timestamp_nanos())
+    |                                                                      ^^^^^^^^^^^^^^^
+
+warning: unused import: `Row`
+ --> src/database/models.rs:2:12
+  |
+2 | use sqlx::{Row, FromRow, SqlitePool};
+  |            ^^^
+
+warning: unused import: `TimeZone`
+ --> src/database/cleanup.rs:6:29
+  |
+6 | use chrono::{DateTime, Utc, TimeZone};
+  |                             ^^^^^^^^
+
+warning: unused variable: `subscription_id`
+  --> src/ingest/dex_parsers.rs:16:33
+   |
+16 |     pub fn parse_program_update(subscription_id: u64, data: &Value) -> Result<Vec<MarketEvent>> {
+   |                                 ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_subscription_id`
+
+warning: unused variable: `slot`
+   --> src/ingest/dex_parsers.rs:163:81
+    |
+163 |     fn parse_orca_event(account: &serde_json::Map<String, Value>, pubkey: &str, slot: u64) -> Result<Vec<MarketEvent>> {
+    |                                                                                 ^^^^ help: if this is intentional, prefix it with an underscore: `_slot`
+
+warning: variable does not need to be mutable
+   --> src/ingest/dex_parsers.rs:164:13
+    |
+164 |         let mut events = Vec::new();
+    |             ----^^^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` on by default
+
+warning: unused variable: `instruction_data`
+   --> src/ingest/dex_parsers.rs:338:31
+    |
+338 |     pub fn parse_raydium_swap(instruction_data: &[u8]) -> Result<SwapEvent> {
+    |                               ^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_instruction_data`
+
+warning: unused variable: `instruction_data`
+   --> src/ingest/dex_parsers.rs:345:31
+    |
+345 |     pub fn parse_jupiter_swap(instruction_data: &[u8]) -> Result<SwapEvent> {
+    |                               ^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_instruction_data`
+
+warning: associated function `extract_wallet_from_context` is never used
+   --> src/ingest/dex_parsers.rs:382:8
+    |
+351 | impl DexEventParser {
+    | ------------------- associated function in this implementation
+...
+382 |     fn extract_wallet_from_context(account: &serde_json::Map<String, Value>) -> Option<String> {
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: field `routing_rules` is never read
+  --> src/transport/routing.rs:20:5
+   |
+17 | pub struct ServiceRegistry {
+   |            --------------- field in this struct
+...
+20 |     routing_rules: Arc<RwLock<Vec<RoutingRule>>>,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `ServiceRegistry` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: fields `batch_size` and `batch_timeout` are never read
+  --> src/database/services.rs:20:5
+   |
+16 | pub struct PersistenceService {
+   |            ------------------ fields in this struct
+...
+20 |     batch_size: usize,
+   |     ^^^^^^^^^^
+21 |     batch_timeout: Duration,
+   |     ^^^^^^^^^^^^^
+
+warning: field `db` is never read
+   --> src/database/services.rs:271:5
+    |
+270 | pub struct WalletTrackerService {
+    |            -------------------- field in this struct
+271 |     db: Arc<BadgerDatabase>,
+    |     ^^
+
+warning: field `position_tracker` is never read
+  --> src/database/analytics/pnl_calculator.rs:58:5
+   |
+56 | pub struct PnLCalculator {
+   |            ------------- field in this struct
+57 |     db: Arc<BadgerDatabase>,
+58 |     position_tracker: Arc<PositionTracker>,
+   |     ^^^^^^^^^^^^^^^^
+
+warning: fields `position_tracker` and `pnl_calculator` are never read
+  --> src/database/analytics/performance_tracker.rs:75:5
+   |
+73 | pub struct PerformanceTracker {
+   |            ------------------ fields in this struct
+74 |     db: Arc<BadgerDatabase>,
+75 |     position_tracker: Arc<PositionTracker>,
+   |     ^^^^^^^^^^^^^^^^
+76 |     pnl_calculator: Arc<PnLCalculator>,
+   |     ^^^^^^^^^^^^^^
+
+warning: field `background_receiver` is never read
+  --> src/intelligence/mod.rs:59:5
+   |
+38 | pub struct WalletIntelligenceEngine {
+   |            ------------------------ field in this struct
+...
+59 |     background_receiver: Arc<tokio::sync::Mutex<mpsc::UnboundedReceiver<BackgroundUpdate>>>,
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: field `mmap` is never read
+  --> src/intelligence/mmap_db.rs:72:5
+   |
+70 | pub struct UltraFastWalletDB {
+   |            ----------------- field in this struct
+71 |     // Memory mapping
+72 |     mmap: MmapMut,
+   |     ^^^^
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> src/database/models.rs:368:36
+    |
+368 |     pub async fn begin_transaction(&self) -> Result<sqlx::Transaction<sqlx::Sqlite>, super::DatabaseError> {
+    |                                    ^^^^^            ------------------------------- the same lifetime is hidden here
+    |                                    |
+    |                                    the lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+    |
+368 |     pub async fn begin_transaction(&self) -> Result<sqlx::Transaction<'_, sqlx::Sqlite>, super::DatabaseError> {
+    |                                                                       +++
+
+warning: `badger` (lib) generated 86 warnings (run `cargo fix --lib -p badger` to apply 47 suggestions)
+warning: unused import: `WalletType`
+  --> src/main.rs:12:95
+   |
+12 | use badger::core::{MarketEvent, TradingSignal, DexType, WalletManager, WalletProvisionConfig, WalletType};
+   |                                                                                               ^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused variable: `confidence`
+   --> src/main.rs:288:42
+    |
+288 |         TradingSignal::Buy { token_mint, confidence, max_amount_sol, .. } => {
+    |                                          ^^^^^^^^^^-
+    |                                          |
+    |                                          help: try removing the field
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `session_id`
+   --> src/main.rs:799:17
+    |
+799 |             let session_id = match performance_tracker.start_trading_session().await {
+    |                 ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_session_id`
+
+warning: unused variable: `performance_tracker`
+   --> src/main.rs:890:13
+    |
+890 |         let performance_tracker = self.performance_tracker.clone();
+    |             ^^^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_performance_tracker`
+
+warning: value assigned to `client_handle` is never read
+    --> src/main.rs:1107:25
+     |
+1107 |                         client_handle = None;
+     |                         ^^^^^^^^^^^^^
+     |
+     = help: maybe it is overwritten before being read?
+     = note: `#[warn(unused_assignments)]` on by default
+
+warning: function `parse_and_display_program_update` is never used
+  --> src/main.rs:78:4
+   |
+78 | fn parse_and_display_program_update(subscription_id: u64, data: &serde_json::Value) {
+   |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: `badger` (bin "badger") generated 6 warnings (run `cargo fix --bin "badger"` to apply 2 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.00s
+     Running `target/debug/badger`
+[2m2025-08-31T04:41:07.596233Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🦡 Badger Trading Bot - Phase 4 Wallet Intelligence & Copy Trading
+[2m2025-08-31T04:41:07.596470Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ==============================================================
+[2m2025-08-31T04:41:07.596479Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m Version: 0.4.0-phase4
+[2m2025-08-31T04:41:07.596486Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m Phase 4 Features:
+[2m2025-08-31T04:41:07.596493Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🔥 Real-time Raydium AMM pool monitoring
+[2m2025-08-31T04:41:07.596499Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   ⚡ Jupiter V6 aggregator event tracking
+[2m2025-08-31T04:41:07.596521Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🌊 Orca Whirlpool program monitoring
+[2m2025-08-31T04:41:07.596526Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🪙 SPL Token new mint detection
+[2m2025-08-31T04:41:07.596531Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🚀 Pump.fun meme coin launch tracking
+[2m2025-08-31T04:41:07.596536Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🎯 Advanced trading signal generation
+[2m2025-08-31T04:41:07.596541Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🗄️ Persistent event storage and analytics
+[2m2025-08-31T04:41:07.596545Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   📊 Real-time performance tracking
+[2m2025-08-31T04:41:07.596550Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🕵️ Wallet intelligence and insider scoring
+[2m2025-08-31T04:41:07.596555Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🧠 Nanosecond-speed insider copy trading
+[2m2025-08-31T04:41:07.596559Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   ⚡ Ultra-fast decision making with memory cache
+[2m2025-08-31T04:41:07.596564Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🎯 Automated position sizing and signal generation
+[2m2025-08-31T04:41:07.596569Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m   🔍 High-performance data queries
+[2m2025-08-31T04:41:07.596584Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m Performance: Nanosecond decisions + comprehensive intelligence tracking
+[2m2025-08-31T04:41:07.596970Z[0m [34mDEBUG[0m ThreadId(01) [1mnew[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m Initializing EnhancedTransportBus with production channel sizes
+[2m2025-08-31T04:41:07.607121Z[0m [34mDEBUG[0m ThreadId(01) [1mnew[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m EnhancedTransportBus initialized successfully
+[2m2025-08-31T04:41:07.607342Z[0m [34mDEBUG[0m ThreadId(01) [1mnew[0m: [2mbadger::transport::routing[0m[2m:[0m Creating new ServiceRegistry [2m[3mtransport[0m[2m=[0mEnhancedTransportBus { market_events: broadcast::Sender, trading_signals: broadcast::Sender, wallet_events: broadcast::Sender, system_alerts: broadcast::Sender, stats: RwLock { data: BusStatistics { market_events_sent: 0, trading_signals_sent: 0, wallet_events_sent: 0, system_alerts_sent: 0, market_subscribers: 0, signal_subscribers: 0, wallet_subscribers: 0, alert_subscribers: 0 } } }[0m
+[2m2025-08-31T04:41:07.607497Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🚀 Starting all Badger services with Enhanced Transport Layer + Phase 3 Database
+[2m2025-08-31T04:41:07.607527Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🏦 Initializing Wallet Management System
+[2m2025-08-31T04:41:07.614171Z[0m [34mDEBUG[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🔐 Loaded existing encryption salt
+[2m2025-08-31T04:41:07.614234Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🏦 Initializing Wallet Management System
+[2m2025-08-31T04:41:07.614252Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 📖 Loading existing wallet configurations
+[2m2025-08-31T04:41:07.614276Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🔐 Existing wallets found, generating master password for decryption
+[2m2025-08-31T04:41:07.614437Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🔐 Loaded existing master password from file
+[2m2025-08-31T04:41:07.614860Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m ✅ Loaded Trading wallet: DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+[2m2025-08-31T04:41:07.615151Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m ✅ Loaded Cold wallet: AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+[2m2025-08-31T04:41:07.615248Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m ✅ All required wallets are present
+[2m2025-08-31T04:41:07.615256Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🔍 Validating wallet configurations
+[2m2025-08-31T04:41:07.615355Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m ✅ Validated Trading wallet: DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+[2m2025-08-31T04:41:07.615398Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m ✅ Validated Cold wallet: AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+[2m2025-08-31T04:41:07.615405Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 💰 Updating wallet balances
+[2m2025-08-31T04:41:08.496673Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 💳 Trading wallet balance: 0.000000 SOL
+[2m2025-08-31T04:41:08.642112Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 💳 Cold wallet balance: 0.000000 SOL
+[2m2025-08-31T04:41:08.642192Z[0m [32m INFO[0m ThreadId(01) [2mbadger::core::wallet_management[0m[2m:[0m 🎯 Wallet Management System initialized successfully
+
+🏦 ═══════════════════════════════════════════════════════
+🏦 BADGER WALLET MANAGEMENT SYSTEM - SUMMARY
+🏦 ═══════════════════════════════════════════════════════
+📱 Trading Wallet:
+   Address: DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+   Alias: Trading Wallet
+   Balance: 0.000000 SOL
+   Status: 🟢 ACTIVE
+   Created: 2025-08-31 02:12:06 UTC
+   🔍 Explorer Links:
+      Solscan:        https://solscan.io/account/DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+      Solana Explorer: https://explorer.solana.com/address/DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+      SolanaFM:       https://solana.fm/address/DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+      XRAY:           https://xray.helius.xyz/account/DQeCo2gWNhM3eSetZ7vwTj33UurMFB9PPNHCjaNyFR7n
+
+📱 Cold Wallet:
+   Address: AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+   Alias: Cold Storage
+   Balance: 0.000000 SOL
+   Status: 🟢 ACTIVE
+   Created: 2025-08-31 02:12:06 UTC
+   🔍 Explorer Links:
+      Solscan:        https://solscan.io/account/AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+      Solana Explorer: https://explorer.solana.com/address/AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+      SolanaFM:       https://solana.fm/address/AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+      XRAY:           https://xray.helius.xyz/account/AmXNkfff9X3JfbkWY6Z8ZceWMCGd6s84s6W82GEJHboJ
+
+🏦 ═══════════════════════════════════════════════════════
+
+[2m2025-08-31T04:41:08.642510Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Wallet Management System initialized successfully
+[2m2025-08-31T04:41:08.642542Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🔄 Starting Transport Monitoring Service
+[2m2025-08-31T04:41:08.642742Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ⏳ Waiting for monitoring service subscriptions to complete...
+[2m2025-08-31T04:41:08.643016Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m 🚀 Transport Monitor - Subscribing to all event channels
+[2m2025-08-31T04:41:08.643230Z[0m [34mDEBUG[0m ThreadId(08) [1msubscribe_market_events[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New market event subscriber added [3mtotal_subscribers[0m[2m=[0m1
+[2m2025-08-31T04:41:08.643329Z[0m [34mDEBUG[0m ThreadId(08) [1msubscribe_trading_signals[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New trading signal subscriber added [3mtotal_subscribers[0m[2m=[0m1
+[2m2025-08-31T04:41:08.643365Z[0m [34mDEBUG[0m ThreadId(08) [1msubscribe_wallet_events[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New wallet event subscriber added [3mtotal_subscribers[0m[2m=[0m1
+[2m2025-08-31T04:41:08.643425Z[0m [34mDEBUG[0m ThreadId(08) [1msubscribe_system_alerts[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m New system alert subscriber added [3mtotal_subscribers[0m[2m=[0m1
+[2m2025-08-31T04:41:08.643453Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m 📊 Transport Monitor subscriptions complete - signaling ready
+[2m2025-08-31T04:41:08.643511Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Monitoring service subscriptions ready
+[2m2025-08-31T04:41:08.643558Z[0m [34mDEBUG[0m ThreadId(01) [1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Registering service: Transport Layer Monitor (transport-monitor-001) [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "transport-monitor-001", name: "Transport Layer Monitor", service_type: Utility, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:41:08.643526Z }, SubscriptionInfo { event_type: TradingSignal, filters: [], subscribed_at: 2025-08-31T04:41:08.643526Z }], status: Starting, registered_at: 2025-08-31T04:41:08.643527Z, last_heartbeat: 2025-08-31T04:41:08.643527Z, metadata: {} } [3mservice_id[0m[2m=[0mtransport-monitor-001[0m
+[2m2025-08-31T04:41:08.643596Z[0m [33m WARN[0m ThreadId(08) [2mbadger[0m[2m:[0m Failed to update monitor service status: Service not found: transport-monitor-001
+[2m2025-08-31T04:41:08.643613Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m 📊 Transport Monitor active - listening for events
+🎧 TRANSPORT MONITOR: Ready to receive events on all channels
+[2m2025-08-31T04:41:08.643627Z[0m [34mDEBUG[0m ThreadId(01) [1mregister_service[0m:[1mpublish_system_alert[0m: [2mbadger::transport::enhanced_bus[0m[2m:[0m Published system alert [3msubscriber_count[0m[2m=[0m1 [3mtotal_sent[0m[2m=[0m1 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "transport-monitor-001", name: "Transport Layer Monitor", service_type: Utility, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:41:08.643526Z }, SubscriptionInfo { event_type: TradingSignal, filters: [], subscribed_at: 2025-08-31T04:41:08.643526Z }], status: Starting, registered_at: 2025-08-31T04:41:08.643527Z, last_heartbeat: 2025-08-31T04:41:08.643527Z, metadata: {} } [3mservice_id[0m[2m=[0mtransport-monitor-001[0m [2m[3malert_type[0m[2m=[0mDiscriminant(5)[0m
+🚨 TRANSPORT BUS - SystemAlert received:
+[2m2025-08-31T04:41:08.643658Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m 🚨 TRANSPORT BUS - SystemAlert received:
+  🟢 Service Started: Transport Layer Monitor v1.0.0
+[2m2025-08-31T04:41:08.643662Z[0m [34mDEBUG[0m ThreadId(01) [1mregister_service[0m: [2mbadger::transport::routing[0m[2m:[0m Service registered successfully: transport-monitor-001 [2m[3mservice_info[0m[2m=[0mServiceInfo { id: "transport-monitor-001", name: "Transport Layer Monitor", service_type: Utility, version: "1.0.0", capabilities: [MarketEventConsumer, TradingSignalConsumer], subscriptions: [SubscriptionInfo { event_type: MarketEvent, filters: [], subscribed_at: 2025-08-31T04:41:08.643526Z }, SubscriptionInfo { event_type: TradingSignal, filters: [], subscribed_at: 2025-08-31T04:41:08.643526Z }], status: Starting, registered_at: 2025-08-31T04:41:08.643527Z, last_heartbeat: 2025-08-31T04:41:08.643527Z, metadata: {} } [3mservice_id[0m[2m=[0mtransport-monitor-001[0m
+[2m2025-08-31T04:41:08.643698Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m ✅ Transport monitoring service started and registered
+[2m2025-08-31T04:41:08.643729Z[0m [32m INFO[0m ThreadId(01) [2mbadger[0m[2m:[0m 🗄️ Initializing Phase 3 Database Services
+[2m2025-08-31T04:41:08.643772Z[0m [32m INFO[0m ThreadId(01) [2mbadger::database[0m[2m:[0m 🗄️ Initializing Database Manager for Phase 3
+[2m2025-08-31T04:41:08.646746Z[0m [31mERROR[0m ThreadId(01) [2mbadger[0m[2m:[0m Failed to initialize database manager: Database connection failed: Failed to connect to database: error returned from database: (code: 5) database is locked
+[2m2025-08-31T04:41:08.646768Z[0m [31mERROR[0m ThreadId(01) [2mbadger[0m[2m:[0m ❌ Failed to start services: Database initialization failed: Database connection failed: Failed to connect to database: error returned from database: (code: 5) database is locked
+[2m2025-08-31T04:41:08.646819Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m 🛑 Transport Monitor received shutdown signal
+[2m2025-08-31T04:41:08.646836Z[0m [32m INFO[0m ThreadId(08) [2mbadger[0m[2m:[0m ✅ Transport Monitor completed successfully
+Error: Database initialization failed: Database connection failed: Failed to connect to database: error returned from database: (code: 5) database is locked

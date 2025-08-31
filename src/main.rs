@@ -9,7 +9,7 @@ use std::sync::Arc;
 
 use badger::ingest::websocket::{SolanaWebSocketClient, WebSocketConfig, WebSocketEvent};
 use badger::ingest::DexEventParser;
-use badger::core::{MarketEvent, TradingSignal, DexType};
+use badger::core::{MarketEvent, TradingSignal, DexType, WalletManager, WalletProvisionConfig, WalletType};
 use badger::transport::{
     EnhancedTransportBus, ServiceRegistry, ServiceInfo, ServiceType, ServiceCapability, 
     ServiceStatus, SubscriptionInfo, EventType, WalletEvent, SystemAlert
@@ -17,6 +17,7 @@ use badger::transport::{
 use badger::database::analytics::{
     PositionTracker, PnLCalculator, PerformanceTracker, InsiderAnalytics
 };
+use badger::intelligence::WalletIntelligenceEngine;
 
 use chrono::Utc;
 use std::collections::HashMap;
@@ -164,6 +165,9 @@ fn generate_basic_trading_signal(event: &MarketEvent) -> Option<TradingSignal> {
                     max_amount_sol: initial_liquidity_sol * 0.1, // Max 10% of pool liquidity
                     reason: format!("New pool on {:?} with {:.1} SOL liquidity", pool.dex, initial_liquidity_sol),
                     source: badger::core::SignalSource::NewPool,
+                    amount_sol: Some(initial_liquidity_sol * 0.1),
+                    max_slippage: Some(5.0),
+                    metadata: None,
                 })
             } else {
                 None
@@ -178,6 +182,9 @@ fn generate_basic_trading_signal(event: &MarketEvent) -> Option<TradingSignal> {
                     max_amount_sol: 1.0, // Conservative 1 SOL max
                     reason: "New token with renounced mint and freeze authority".to_string(),
                     source: badger::core::SignalSource::NewPool,
+                    amount_sol: Some(1.0),
+                    max_slippage: Some(5.0),
+                    metadata: None,
                 })
             } else {
                 None
@@ -190,14 +197,14 @@ fn generate_basic_trading_signal(event: &MarketEvent) -> Option<TradingSignal> {
 /// Display trading signals in production format
 fn display_trading_signal(signal: &TradingSignal) {
     match signal {
-        TradingSignal::Buy { token_mint, confidence, max_amount_sol, reason, source } => {
+        TradingSignal::Buy { token_mint, confidence, max_amount_sol, reason, source, .. } => {
             println!("🎯 BUY SIGNAL GENERATED");
             println!("   Token: {} | Confidence: {:.1}%", 
                 &token_mint[..8], confidence * 100.0);
             println!("   Max Amount: {:.3} SOL | Source: {:?}", max_amount_sol, source);
             println!("   Reason: {}", reason);
         }
-        TradingSignal::Sell { token_mint, price_target, stop_loss, reason } => {
+        TradingSignal::Sell { token_mint, price_target, stop_loss, reason, .. } => {
             println!("💰 SELL SIGNAL GENERATED");
             println!("   Token: {} | Target: {:.6} | Stop: {:.6}", 
                 &token_mint[..8], price_target, stop_loss);
@@ -208,6 +215,17 @@ fn display_trading_signal(signal: &TradingSignal) {
             println!("   Token: {} | Volume +{:.1}% | Whale: {}", 
                 &token_mint[..8], volume_increase * 100.0, whale_activity);
         }
+    }
+}
+
+/// Process market event for wallet intelligence (Phase 4: Ultra-fast insider copy trading)
+async fn process_market_event_for_wallet_intelligence(
+    event: &MarketEvent,
+    wallet_intelligence: &Arc<WalletIntelligenceEngine>,
+) {
+    // Process event through ultra-fast wallet intelligence engine
+    if let Err(e) = wallet_intelligence.process_market_event(event).await {
+        warn!("Failed to process market event for wallet intelligence: {}", e);
     }
 }
 
@@ -458,11 +476,15 @@ struct BadgerOrchestrator {
     transport_bus: Arc<EnhancedTransportBus>,
     service_registry: Arc<ServiceRegistry>,
     database_manager: Option<badger::DatabaseManager>,
+    // Wallet management system
+    wallet_manager: Option<Arc<tokio::sync::RwLock<WalletManager>>>,
     // Analytics components
     position_tracker: Option<Arc<PositionTracker>>,
     pnl_calculator: Option<Arc<PnLCalculator>>,
     performance_tracker: Option<Arc<PerformanceTracker>>,
     insider_analytics: Option<Arc<InsiderAnalytics>>,
+    // Wallet intelligence system
+    wallet_intelligence: Option<Arc<WalletIntelligenceEngine>>,
 }
 
 impl BadgerOrchestrator {
@@ -494,12 +516,43 @@ impl BadgerOrchestrator {
             transport_bus,
             service_registry,
             database_manager: None,
+            // Initialize wallet management as None - will be set up later
+            wallet_manager: None,
             // Initialize analytics components as None - will be set up later
             position_tracker: None,
             pnl_calculator: None,
             performance_tracker: None,
             insider_analytics: None,
+            wallet_intelligence: None,
         }
+    }
+
+    /// Initialize the wallet management system
+    async fn initialize_wallet_system(&mut self) -> Result<()> {
+        info!("🏦 Initializing Wallet Management System");
+
+        // Create wallet provisioning configuration
+        let wallet_config = WalletProvisionConfig {
+            rpc_url: "https://api.mainnet-beta.solana.com".to_string(),
+            config_dir: "wallets".to_string(),
+            master_password: None, // Will be generated automatically
+            auto_create: true,
+            initial_trading_balance_sol: Some(0.1), // Start with 0.1 SOL for testing
+        };
+
+        // Create wallet manager
+        let mut wallet_manager = WalletManager::new(wallet_config)
+            .map_err(|e| anyhow::anyhow!("Failed to create wallet manager: {}", e))?;
+
+        // Initialize and provision wallets
+        wallet_manager.initialize().await
+            .map_err(|e| anyhow::anyhow!("Failed to initialize wallet system: {}", e))?;
+
+        // Store wallet manager in orchestrator
+        self.wallet_manager = Some(Arc::new(tokio::sync::RwLock::new(wallet_manager)));
+
+        info!("✅ Wallet Management System initialized successfully");
+        Ok(())
     }
 
     /// Initialize the database services (Phase 3)
@@ -517,6 +570,30 @@ impl BadgerOrchestrator {
             error!("Failed to initialize database manager: {}", e);
             return Err(anyhow::anyhow!("Database initialization failed: {}", e));
         }
+
+        // Run database migrations before starting services
+        info!("🔄 Running database migrations...");
+        let db = database_manager.get_database();
+        let migration_runner = badger::database::MigrationRunner::new(db.clone());
+        
+        if let Err(e) = migration_runner.run_migrations().await {
+            error!("Failed to run database migrations: {}", e);
+            return Err(anyhow::anyhow!("Database migration failed: {}", e));
+        }
+        
+        // Get migration status for info
+        match migration_runner.get_migration_status().await {
+            Ok(status) => info!("📊 Migration status: {}", status.summary()),
+            Err(e) => warn!("Could not get migration status: {}", e),
+        }
+        
+        // Initialize session now that migrations are complete
+        info!("🔄 Initializing database session...");
+        if let Err(e) = db.initialize_session().await {
+            error!("Failed to initialize database session: {}", e);
+            return Err(anyhow::anyhow!("Database session initialization failed: {}", e));
+        }
+        info!("✅ Database session initialized successfully");
         
         // Start all database services
         let db_handles = database_manager.start_all_services().await
@@ -576,18 +653,126 @@ impl BadgerOrchestrator {
         insider_analytics.initialize_schema().await
             .map_err(|e| anyhow::anyhow!("Failed to initialize insider analytics schema: {}", e))?;
 
+        // Initialize wallet intelligence engine (Phase 4)
+        let (signal_sender, _signal_receiver) = tokio::sync::mpsc::unbounded_channel();
+        let wallet_intelligence = Arc::new(WalletIntelligenceEngine::new(
+            db.clone(),
+            signal_sender,
+        ).await.map_err(|e| anyhow::anyhow!("Failed to create wallet intelligence engine: {}", e))?);
+        
+        wallet_intelligence.initialize_schema().await
+            .map_err(|e| anyhow::anyhow!("Failed to initialize wallet intelligence schema: {}", e))?;
+
+        // Start background tasks for wallet intelligence
+        wallet_intelligence.start_background_tasks().await
+            .map_err(|e| anyhow::anyhow!("Failed to start wallet intelligence background tasks: {}", e))?;
+
         // Store references
         self.position_tracker = Some(position_tracker);
         self.pnl_calculator = Some(pnl_calculator);
         self.performance_tracker = Some(performance_tracker);
         self.insider_analytics = Some(insider_analytics);
+        self.wallet_intelligence = Some(wallet_intelligence);
 
         info!("✅ Analytics components initialized successfully");
         info!("   📊 Position Tracker: Ready for real-time position tracking");
         info!("   💰 P&L Calculator: Ready for real-time profit/loss calculation");
         info!("   📈 Performance Tracker: Ready for bot performance metrics");
         info!("   🕵️ Insider Analytics: Ready for wallet intelligence tracking");
+        info!("   🧠 Wallet Intelligence: Ready for nanosecond insider copy trading");
         
+        Ok(())
+    }
+
+    /// Start wallet monitoring and balance tracking service
+    async fn start_wallet_monitoring_service(&mut self) -> Result<()> {
+        info!("🏦 Starting wallet monitoring service");
+
+        let wallet_manager = self.wallet_manager.clone()
+            .ok_or_else(|| anyhow::anyhow!("Wallet manager not initialized"))?;
+
+        let mut shutdown_rx = self.shutdown_tx.subscribe();
+
+        let wallet_monitoring_task = tokio::spawn(async move {
+            let mut balance_check_interval = tokio::time::interval(Duration::from_secs(60)); // Check balances every minute
+            let mut health_check_interval = tokio::time::interval(Duration::from_secs(300)); // Health check every 5 minutes
+            
+            info!("🏦 Wallet monitoring service started - checking balances every 60 seconds");
+
+            loop {
+                tokio::select! {
+                    // Balance updates every minute
+                    _ = balance_check_interval.tick() => {
+                        let mut wallet_writer = wallet_manager.write().await;
+                        
+                        // Update balances for all wallets
+                        for wallet_type in wallet_writer.get_available_wallets() {
+                            match wallet_writer.get_balance(&wallet_type, true).await {
+                                Ok(balance) => {
+                                    debug!("💳 {:?} wallet balance updated: {:.6} SOL", wallet_type, balance);
+                                }
+                                Err(e) => {
+                                    warn!("Failed to update balance for {:?} wallet: {}", wallet_type, e);
+                                }
+                            }
+                        }
+                    }
+
+                    // Comprehensive health check every 5 minutes
+                    _ = health_check_interval.tick() => {
+                        let wallet_reader = wallet_manager.read().await;
+                        
+                        println!("\n🏦 ═══════════════════════════════════════════════════════");
+                        println!("🏦 WALLET HEALTH CHECK - {}", chrono::Utc::now().format("%H:%M:%S UTC"));
+                        println!("🏦 ═══════════════════════════════════════════════════════");
+                        
+                        for wallet_type in wallet_reader.get_available_wallets() {
+                            match wallet_reader.get_wallet_config(&wallet_type) {
+                                Ok(config) => {
+                                    let balance = config.cached_balance_sol
+                                        .map(|b| format!("{:.6} SOL", b))
+                                        .unwrap_or_else(|| "Unknown".to_string());
+                                    
+                                    let last_accessed = config.last_accessed
+                                        .map(|ts| ts.format("%H:%M:%S").to_string())
+                                        .unwrap_or_else(|| "Never".to_string());
+                                    
+                                    let status = if config.is_active { "🟢 Active" } else { "🔴 Inactive" };
+                                    
+                                    println!("📱 {:?} Wallet:", wallet_type);
+                                    println!("   Address: {}...{}", &config.public_key[..8], &config.public_key[config.public_key.len()-8..]);
+                                    println!("   Balance: {} | Status: {}", balance, status);
+                                    println!("   Last Accessed: {}", last_accessed);
+                                    
+                                    // Add explorer links
+                                    match wallet_reader.get_explorer_url(&wallet_type, Some("solscan")) {
+                                        Ok(url) => println!("   🔍 Solscan: {}", url),
+                                        Err(_) => println!("   🔍 Explorer: Unable to generate link"),
+                                    }
+                                }
+                                Err(e) => {
+                                    println!("❌ {:?} Wallet: Error - {}", wallet_type, e);
+                                }
+                            }
+                        }
+                        
+                        println!("🏦 ═══════════════════════════════════════════════════════\n");
+                    }
+
+                    // Handle shutdown
+                    _ = shutdown_rx.recv() => {
+                        info!("🛑 Wallet monitoring service received shutdown signal");
+                        break;
+                    }
+                }
+            }
+
+            info!("✅ Wallet monitoring service completed successfully");
+            Ok(())
+        });
+
+        self.tasks.push(wallet_monitoring_task);
+        info!("✅ Wallet monitoring service started successfully");
         Ok(())
     }
 
@@ -704,6 +889,7 @@ impl BadgerOrchestrator {
         let pnl_calculator = self.pnl_calculator.clone(); 
         let performance_tracker = self.performance_tracker.clone();
         let insider_analytics = self.insider_analytics.clone();
+        let wallet_intelligence = self.wallet_intelligence.clone();
         
         let ingestion_task = tokio::spawn(async move {
             info!("🚀 Badger Ingest - Real-time Solana Data Processing");
@@ -835,6 +1021,11 @@ impl BadgerOrchestrator {
                                             // Process with insider analytics (Phase 3: Task 3.1)
                                             if let Some(insider_analytics) = &insider_analytics {
                                                 process_market_event_for_insider_analytics(&market_event, insider_analytics).await;
+                                            }
+                                            
+                                            // Process with wallet intelligence (Phase 4: Ultra-fast copy trading)
+                                            if let Some(wallet_intelligence) = &wallet_intelligence {
+                                                process_market_event_for_wallet_intelligence(&market_event, wallet_intelligence).await;
                                             }
                                             
                                             // Generate and route trading signals
@@ -1000,12 +1191,12 @@ impl BadgerOrchestrator {
                         println!("🎯 TRANSPORT BUS - TradingSignal received:");
                         info!("🎯 TRANSPORT BUS - TradingSignal received:");
                         match &trading_signal {
-                            TradingSignal::Buy { token_mint, confidence, max_amount_sol, reason, source } => {
+                            TradingSignal::Buy { token_mint, confidence, max_amount_sol, reason, source, .. } => {
                                 println!("  🟢 BUY SIGNAL: Token: {} | Confidence: {:.1}% | Max: {:.3} SOL", 
                                     &token_mint[..8], confidence * 100.0, max_amount_sol);
                                 println!("      Reason: {} | Source: {:?}", reason, source);
                             }
-                            TradingSignal::Sell { token_mint, price_target, stop_loss, reason } => {
+                            TradingSignal::Sell { token_mint, price_target, stop_loss, reason, .. } => {
                                 println!("  🔴 SELL SIGNAL: Token: {} | Target: {:.6} | Stop: {:.6}", 
                                     &token_mint[..8], price_target, stop_loss);
                                 println!("      Reason: {}", reason);
@@ -1113,6 +1304,9 @@ impl BadgerOrchestrator {
     async fn start_all_services(&mut self) -> Result<()> {
         info!("🚀 Starting all Badger services with Enhanced Transport Layer + Phase 3 Database");
         
+        // Initialize wallet management system first
+        self.initialize_wallet_system().await?;
+        
         // Start transport monitoring first to capture all events
         self.start_transport_monitoring_service().await?;
         
@@ -1124,6 +1318,9 @@ impl BadgerOrchestrator {
         
         // Start analytics reporting service (Phase 3: Task 3.1)
         self.start_analytics_reporting_service().await?;
+        
+        // Start wallet monitoring service
+        self.start_wallet_monitoring_service().await?;
         
         // Display transport bus statistics and start periodic monitoring
         let stats = self.transport_bus.get_statistics().await;
@@ -1160,7 +1357,19 @@ impl BadgerOrchestrator {
         
         info!("✅ All {} services started successfully", self.tasks.len());
         
-        println!("\n🔍 PHASE 3: ENHANCED DATA PERSISTENCE & ANALYTICS");
+        println!("\n🔍 BADGER TRADING BOT - FULLY OPERATIONAL");
+        println!("   🏦 Wallet Management:");
+        if let Some(wallet_manager) = &self.wallet_manager {
+            let wallet_reader = wallet_manager.read().await;
+            for wallet_type in wallet_reader.get_available_wallets() {
+                if let Ok(config) = wallet_reader.get_wallet_config(&wallet_type) {
+                    let balance = config.cached_balance_sol
+                        .map(|b| format!("{:.6} SOL", b))
+                        .unwrap_or_else(|| "Unknown".to_string());
+                    println!("      • {:?}: {} ({})", wallet_type, config.public_key, balance);
+                }
+            }
+        }
         println!("   📊 Listening for real-time Solana DEX activity");
         println!("   🗄️ Database Services Active:");
         println!("      • PersistenceService - Storing all events");
@@ -1248,7 +1457,7 @@ fn init_tracing() -> Result<()> {
         //.with(file_layer)
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info,badger=debug"))
+                .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info,badger=debug,sqlx=warn"))
         )
         .init();
     
@@ -1272,10 +1481,10 @@ async fn async_main() -> Result<()> {
     // Initialize comprehensive logging
     init_tracing()?;
     
-    info!("🦡 Badger Trading Bot - Phase 3 Data Persistence & Analytics");
+    info!("🦡 Badger Trading Bot - Phase 4 Wallet Intelligence & Copy Trading");
     info!("==============================================================");
-    info!("Version: 0.3.0-phase3");
-    info!("Phase 3 Features:");
+    info!("Version: 0.4.0-phase4");
+    info!("Phase 4 Features:");
     info!("  🔥 Real-time Raydium AMM pool monitoring");
     info!("  ⚡ Jupiter V6 aggregator event tracking");
     info!("  🌊 Orca Whirlpool program monitoring");
@@ -1285,8 +1494,11 @@ async fn async_main() -> Result<()> {
     info!("  🗄️ Persistent event storage and analytics");
     info!("  📊 Real-time performance tracking");
     info!("  🕵️ Wallet intelligence and insider scoring");
+    info!("  🧠 Nanosecond-speed insider copy trading");
+    info!("  ⚡ Ultra-fast decision making with memory cache");
+    info!("  🎯 Automated position sizing and signal generation");
     info!("  🔍 High-performance data queries");
-    info!("Performance: Zero-delay processing + comprehensive data persistence");
+    info!("Performance: Nanosecond decisions + comprehensive intelligence tracking");
 
     let mut orchestrator = BadgerOrchestrator::new();
     

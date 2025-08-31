@@ -127,7 +127,7 @@ impl PersistenceService {
                     match self.db.get_session_stats().await {
                         Ok(stats) => {
                             info!("📊 Database Stats: {} events, {} signals stored", 
-                                stats.total_market_events, stats.total_trading_signals);
+                                stats.events_processed, stats.signals_generated);
                         }
                         Err(e) => {
                             warn!("Failed to get session stats: {}", e);
@@ -253,10 +253,11 @@ impl AnalyticsService {
         match self.db.get_session_stats().await {
             Ok(stats) => {
                 info!("📊 DATABASE STATISTICS:");
-                info!("   🗄️ Market Events Stored: {}", stats.total_market_events);
-                info!("   📶 Trading Signals: {}", stats.total_trading_signals);
-                info!("   ⏱️ Session Runtime: {:.1}m", stats.uptime_seconds as f64 / 60.0);
-                info!("   💾 Database Size: {} records", stats.total_market_events + stats.total_trading_signals);
+                info!("   🗄️ Market Events Stored: {}", stats.events_processed);
+                info!("   📶 Trading Signals: {}", stats.signals_generated);
+                let uptime_seconds = std::cmp::max(0, stats.last_updated - stats.session_start);
+                info!("   ⏱️ Session Runtime: {:.1}m", uptime_seconds as f64 / 60.0);
+                info!("   💾 Database Size: {} records", stats.events_processed + stats.signals_generated);
             }
             Err(e) => {
                 warn!("Failed to get session stats: {}", e);
