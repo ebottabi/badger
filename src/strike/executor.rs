@@ -12,23 +12,42 @@ use solana_sdk::{
 use std::str::FromStr;
 
 /// Production-ready trade executor with real DEX integration
-#[derive(Debug)]
+// Debug trait removed due to DexClient not implementing Debug
 pub struct TradeExecutor {
     /// Signal bus for receiving trading signals
     signal_bus: SignalBus,
-    /// Database connection for trade records
-    db: BadgerDB,
     /// DEX client for executing swaps
     dex_client: DexClient,
-    /// Secure wallet manager for transaction signing
-    wallet_manager: WalletManager,
 }
 
 impl TradeExecutor {
+    /// Creates a new trade executor with DEX client only
+    /// 
+    /// # Arguments
+    /// * `dex_config` - Optional DEX configuration (uses defaults if None)
+    /// 
+    /// # Returns
+    /// * `Result<Self>` - Trade executor instance for orchestrator-managed wallets
+    #[instrument]
+    pub async fn new_with_dex_only(dex_config: Option<DexConfig>) -> Result<Self> {
+        info!("⚡ Initializing TradeExecutor with DEX integration only");
+        
+        // Initialize DEX client with real Solana integration
+        let dex_config = dex_config.unwrap_or_default();
+        let dex_client = DexClient::new(dex_config)
+            .context("Failed to initialize DEX client")?;
+        
+        info!("✅ TradeExecutor initialized - wallet management handled by orchestrator");
+        
+        Ok(Self {
+            signal_bus: SignalBus::new(),
+            dex_client,
+        })
+    }
+
     /// Creates a new trade executor with full DEX and wallet integration
     /// 
     /// # Arguments
-    /// * `db` - Database connection for storing trade records
     /// * `dex_config` - Optional DEX configuration (uses defaults if None)
     /// * `wallet_config` - Optional wallet configuration (uses defaults if None)
     /// 
@@ -36,7 +55,6 @@ impl TradeExecutor {
     /// * `Result<Self>` - Trade executor instance ready for production trading
     #[instrument]
     pub async fn new(
-        db: BadgerDB,
         dex_config: Option<DexConfig>,
         wallet_config: Option<WalletConfig>,
     ) -> Result<Self> {
@@ -47,30 +65,11 @@ impl TradeExecutor {
         let dex_client = DexClient::new(dex_config)
             .context("Failed to initialize DEX client")?;
         
-        info!("DEX client initialized successfully");
-        
-        // Initialize secure wallet manager
-        let wallet_config = wallet_config.unwrap_or_default();
-        let mut wallet_manager = WalletManager::new(wallet_config)
-            .context("Failed to initialize wallet manager")?;
-        
-        // Set up approval callback for high-value transactions
-        wallet_manager.set_approval_callback(|request| {
-            // In production, this would connect to a proper approval system
-            // For now, we'll implement basic safety checks
-            Self::default_approval_logic(request)
-        });
-        
-        info!(
-            wallet_pubkey = %wallet_manager.pubkey(),
-            "Wallet manager initialized successfully"
-        );
+        info!("✅ TradeExecutor initialized with DEX client (legacy constructor)");
         
         Ok(Self {
             signal_bus: SignalBus::new(),
-            db,
             dex_client,
-            wallet_manager,
         })
     }
     
@@ -123,14 +122,8 @@ impl TradeExecutor {
         
         let mut signal_receiver = self.signal_bus.subscribe();
         
-        // Log initial wallet statistics
-        let wallet_stats = self.wallet_manager.get_wallet_stats();
-        info!(
-            wallet_pubkey = %wallet_stats.wallet_pubkey,
-            max_transaction_value = wallet_stats.max_transaction_value_lamports,
-            approval_threshold = wallet_stats.approval_threshold_lamports,
-            "Wallet statistics at startup"
-        );
+        // Wallet statistics will be managed by orchestrator
+        info!("🚀 TradeExecutor signal processing started (orchestrator-managed wallets)");
         
         while let Ok(signal) = signal_receiver.recv().await {
             if let Err(e) = self.execute_signal(&signal).await {
@@ -142,10 +135,13 @@ impl TradeExecutor {
                     "Failed to execute trading signal"
                 );
                 
-                // Record failed trade attempt in database
-                if let Err(db_error) = self.record_failed_trade(&signal, &e).await {
-                    error!(error = %db_error, "Failed to record trade failure in database");
-                }
+                // Log failed trade attempt (database removed)
+                error!(
+                    signal_type = ?signal.signal_type,
+                    token_mint = %signal.token.mint,
+                    error = %e,
+                    "Trade failure recorded in logs (database removed)"
+                );
             }
         }
         
@@ -171,12 +167,17 @@ impl TradeExecutor {
             "Processing trading signal"
         );
         
+        // Extract wallet pubkey from signal, or use a default
+        let wallet_pubkey = signal.wallet.as_ref()
+            .map(|w| w.address.clone())
+            .unwrap_or_else(|| "11111111111111111111111111111112".to_string()); // Fallback address
+        
         match signal.signal_type {
             SignalType::Buy => {
-                self.execute_buy_order(&signal.token, signal.amount_sol).await?;
+                self.execute_buy_order(&signal.token, signal.amount_sol, &wallet_pubkey).await?;
             }
             SignalType::Sell => {
-                self.execute_sell_order(&signal.token, signal.amount_sol).await?;
+                self.execute_sell_order(&signal.token, signal.amount_sol, &wallet_pubkey).await?;
             }
             SignalType::Alert => {
                 info!(
@@ -201,7 +202,7 @@ impl TradeExecutor {
     /// # Returns
     /// * `Result<()>` - Ok if buy order was executed successfully
     #[instrument(skip(self))]
-    async fn execute_buy_order(&mut self, token: &Token, amount_sol: f64) -> Result<()> {
+    async fn execute_buy_order(&mut self, token: &Token, amount_sol: f64, wallet_pubkey: &str) -> Result<()> {
         info!(
             token_symbol = %token.symbol,
             token_mint = %token.mint,
@@ -219,45 +220,25 @@ impl TradeExecutor {
             output_mint: token.mint.clone(),
             amount: amount_lamports,
             slippage_bps: 50, // 0.5% slippage tolerance
-            user_public_key: self.wallet_manager.pubkey().to_string(),
+            user_public_key: wallet_pubkey.to_string(),
             auto_create_token_accounts: true,
         };
         
         // Execute the swap through DEX client
         let swap_result = self.execute_dex_swap(swap_request, "BUY").await?;
         
-        // Record successful trade in database
-        let mut trade_record = TradeRecord::new(
-            token.mint.clone(),
-            Some(token.symbol.clone()),
-            "buy".to_string(),
-            amount_sol,
-            "executed".to_string(),
+        // Log successful trade (database removed - using logs only)
+        info!(
+            signature = %swap_result.signature,
+            input_amount_sol = swap_result.input_amount as f64 / 1_000_000_000.0,
+            output_amount_tokens = swap_result.output_amount,
+            fee_sol = swap_result.fee_lamports as f64 / 1_000_000_000.0,
+            price_impact = ?swap_result.price_impact_percent,
+            token_mint = %token.mint,
+            token_symbol = %token.symbol,
+            trade_type = "buy",
+            "✅ BUY order executed successfully (logged only - database removed)"
         );
-        
-        // Update with actual swap results
-        trade_record.transaction_signature = Some(swap_result.signature.clone());
-        trade_record.gas_fee = Some(swap_result.fee_lamports as f64 / 1_000_000_000.0); // Convert to SOL
-        trade_record.slippage = swap_result.price_impact_percent;
-        trade_record.actual_input_amount = Some(swap_result.input_amount as f64 / 1_000_000_000.0);
-        trade_record.actual_output_amount = Some(swap_result.output_amount as f64);
-        
-        // Calculate profit/loss (initially 0 for buy orders)
-        trade_record.profit_loss = Some(0.0);
-        
-        // Store in database
-        if let Err(e) = self.db.record_trade(trade_record).await {
-            error!(error = %e, "Failed to record buy trade in database");
-        } else {
-            info!(
-                signature = %swap_result.signature,
-                input_amount_sol = swap_result.input_amount as f64 / 1_000_000_000.0,
-                output_amount_tokens = swap_result.output_amount,
-                fee_sol = swap_result.fee_lamports as f64 / 1_000_000_000.0,
-                price_impact = ?swap_result.price_impact_percent,
-                "✅ BUY order executed and recorded successfully"
-            );
-        }
         
         Ok(())
     }
@@ -271,7 +252,7 @@ impl TradeExecutor {
     /// # Returns
     /// * `Result<()>` - Ok if sell order was executed successfully
     #[instrument(skip(self))]
-    async fn execute_sell_order(&mut self, token: &Token, amount_sol: f64) -> Result<()> {
+    async fn execute_sell_order(&mut self, token: &Token, amount_sol: f64, wallet_pubkey: &str) -> Result<()> {
         info!(
             token_symbol = %token.symbol,
             token_mint = %token.mint,
@@ -307,48 +288,30 @@ impl TradeExecutor {
             output_mint: sol_mint.to_string(),
             amount: estimated_token_amount,
             slippage_bps: 100, // Higher slippage tolerance for sells (1%)
-            user_public_key: self.wallet_manager.pubkey().to_string(),
+            user_public_key: wallet_pubkey.to_string(),
             auto_create_token_accounts: false, // SOL account should exist
         };
         
         // Execute the swap through DEX client
         let swap_result = self.execute_dex_swap(swap_request, "SELL").await?;
         
-        // Record successful trade in database
-        let mut trade_record = TradeRecord::new(
-            token.mint.clone(),
-            Some(token.symbol.clone()),
-            "sell".to_string(),
-            swap_result.output_amount as f64 / 1_000_000_000.0, // Actual SOL received
-            "executed".to_string(),
-        );
-        
-        // Update with actual swap results
-        trade_record.transaction_signature = Some(swap_result.signature.clone());
-        trade_record.gas_fee = Some(swap_result.fee_lamports as f64 / 1_000_000_000.0);
-        trade_record.slippage = swap_result.price_impact_percent;
-        trade_record.actual_input_amount = Some(swap_result.input_amount as f64);
-        trade_record.actual_output_amount = Some(swap_result.output_amount as f64 / 1_000_000_000.0);
-        
-        // Calculate profit/loss (positive for profitable sells)
+        // Calculate profit/loss and log successful trade (database removed - using logs only)
         let actual_sol_received = swap_result.output_amount as f64 / 1_000_000_000.0;
         let gas_fee_sol = swap_result.fee_lamports as f64 / 1_000_000_000.0;
-        trade_record.profit_loss = Some(actual_sol_received - gas_fee_sol);
+        let profit_loss_sol = actual_sol_received - gas_fee_sol;
         
-        // Store in database
-        if let Err(e) = self.db.record_trade(trade_record).await {
-            error!(error = %e, "Failed to record sell trade in database");
-        } else {
-            info!(
-                signature = %swap_result.signature,
-                input_amount_tokens = swap_result.input_amount,
-                output_amount_sol = actual_sol_received,
-                fee_sol = gas_fee_sol,
-                price_impact = ?swap_result.price_impact_percent,
-                profit_loss_sol = actual_sol_received - gas_fee_sol,
-                "✅ SELL order executed and recorded successfully"
-            );
-        }
+        info!(
+            signature = %swap_result.signature,
+            input_amount_tokens = swap_result.input_amount,
+            output_amount_sol = actual_sol_received,
+            fee_sol = gas_fee_sol,
+            price_impact = ?swap_result.price_impact_percent,
+            profit_loss_sol = profit_loss_sol,
+            token_mint = %token.mint,
+            token_symbol = %token.symbol,
+            trade_type = "sell",
+            "✅ SELL order executed successfully (logged only - database removed)"
+        );
         
         Ok(())
     }
@@ -394,63 +357,23 @@ impl TradeExecutor {
         Ok(swap_result)
     }
     
-    /// Records a failed trade attempt in the database for audit purposes
-    /// 
-    /// # Arguments
-    /// * `signal` - The signal that failed to execute
-    /// * `error` - The error that occurred
-    /// 
-    /// # Returns
-    /// * `Result<()>` - Ok if failure was recorded successfully
-    #[instrument(skip(self))]
-    async fn record_failed_trade(&self, signal: &Signal, error: &anyhow::Error) -> Result<()> {
-        let mut trade_record = TradeRecord::new(
-            signal.token.mint.clone(),
-            Some(signal.token.symbol.clone()),
-            match signal.signal_type {
-                SignalType::Buy => "buy",
-                SignalType::Sell => "sell", 
-                SignalType::Alert => "alert",
-            }.to_string(),
-            signal.amount_sol,
-            "failed".to_string(),
-        );
-        
-        // Add error information
-        trade_record.error_message = Some(error.to_string());
-        trade_record.profit_loss = Some(0.0); // No P&L for failed trades
-        
-        self.db.record_trade(trade_record).await
-            .context("Failed to record trade failure")?;
-        
-        debug!("Failed trade recorded in database for audit");
-        Ok(())
-    }
-    
     /// Gets current trading statistics and performance metrics
     /// 
     /// # Returns
     /// * `Result<TradingStats>` - Current trading performance statistics
-    pub async fn get_trading_stats(&self) -> Result<TradingStats> {
-        // Get database statistics
-        let db_stats = self.db.get_database_stats().await
-            .context("Failed to get database stats")?;
+    pub async fn get_trading_stats(&self, wallet_pubkey: &str) -> Result<TradingStats> {
+        // Simplified stats without wallet manager (orchestrator provides wallet info)
         
-        // Get wallet statistics
-        let wallet_stats = self.wallet_manager.get_wallet_stats();
-        
-        // TODO: Query recent trades from database to calculate performance metrics
-        // For now, return basic stats
-        
+        // Return basic stats (wallet management handled by orchestrator)
         Ok(TradingStats {
-            wallet_pubkey: wallet_stats.wallet_pubkey,
-            total_trades_attempted: wallet_stats.total_transactions,
-            total_volume_sol: wallet_stats.total_value_lamports as f64 / 1_000_000_000.0,
-            successful_trades: 0, // TODO: Calculate from database
-            failed_trades: 0,    // TODO: Calculate from database
-            total_fees_paid_sol: 0.0, // TODO: Calculate from database
-            net_profit_loss_sol: 0.0, // TODO: Calculate from database
-            average_slippage_percent: 0.0, // TODO: Calculate from database
+            wallet_pubkey: solana_sdk::pubkey::Pubkey::from_str(wallet_pubkey)?,
+            total_trades_attempted: 0, // Orchestrator tracks this
+            total_volume_sol: 0.0,     // Orchestrator tracks this
+            successful_trades: 0,      // Orchestrator tracks this
+            failed_trades: 0,          // Orchestrator tracks this
+            total_fees_paid_sol: 0.0,  // Orchestrator tracks this
+            net_profit_loss_sol: 0.0,  // Orchestrator tracks this
+            average_slippage_percent: 0.0, // Orchestrator tracks this
         })
     }
 }

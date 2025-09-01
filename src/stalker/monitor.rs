@@ -7,8 +7,9 @@ use solana_sdk::{
     pubkey::Pubkey,
     commitment_config::CommitmentConfig,
     account::Account,
+    program_pack::Pack,
 };
-use solana_account_decoder::{UiAccount, UiAccountEncoding};
+use solana_account_decoder::{UiAccount, UiAccountEncoding, UiAccountData};
 use dashmap::DashMap;
 use tokio::time::{sleep, Duration, Instant};
 use tracing::{info, debug, warn, error, instrument};
@@ -162,7 +163,7 @@ pub struct MonitoringStats {
 }
 
 /// Advanced wallet monitor with real Solana account tracking
-#[derive(Debug)]
+// Debug trait removed due to RpcClient not implementing Debug
 pub struct WalletMonitor {
     /// Wallets being tracked (address -> wallet info)
     tracked_wallets: Arc<DashMap<String, Wallet>>,
@@ -205,7 +206,7 @@ impl WalletMonitor {
         );
         
         // Test RPC connection
-        match rpc_client.get_slot().await {
+        match rpc_client.get_slot() {
             Ok(slot) => {
                 info!(slot = slot, "Successfully connected to Solana RPC");
             }
@@ -378,7 +379,8 @@ impl WalletMonitor {
             
             for address in chunk {
                 let address = address.clone();
-                let rpc_client = self.rpc_client.clone();
+                let rpc_endpoint = self.config.rpc_endpoint.clone();
+                let rpc_client = RpcClient::new(rpc_endpoint);
                 let snapshots = self.account_snapshots.clone();
                 let config = self.config.clone();
                 
@@ -406,8 +408,16 @@ impl WalletMonitor {
                                     "🚨 Wallet activity detected"
                                 );
                                 
-                                // Publish alert to alert bus
-                                if let Err(e) = self.alert_bus.publish_alert(&alert).await {
+                                // Convert ActivityAlert to Alert and publish
+                                let transport_alert = crate::transport::alert_bus::Alert {
+                                    alert_type: crate::transport::alert_bus::AlertType::WalletActivity,
+                                    token: None,
+                                    wallet: Some(alert.wallet.clone()),
+                                    message: format!("Wallet activity detected: {:?}", alert.activity_type),
+                                    timestamp: alert.timestamp.timestamp() as u64,
+                                };
+                                
+                                if let Err(e) = self.alert_bus.publish(transport_alert) {
                                     error!(error = %e, "Failed to publish activity alert");
                                 }
                             }
@@ -450,7 +460,7 @@ impl WalletMonitor {
             .context("Invalid wallet address")?;
         
         // Get account info
-        let account_info = match rpc_client.get_account(&pubkey).await {
+        let account_info = match rpc_client.get_account(&pubkey) {
             Ok(info) => info,
             Err(e) => {
                 debug!(
@@ -468,7 +478,7 @@ impl WalletMonitor {
             solana_client::rpc_request::TokenAccountsFilter::ProgramId(
                 spl_token::id()
             ),
-        ).await {
+        ) {
             Ok(accounts) => accounts,
             Err(e) => {
                 debug!(
@@ -483,18 +493,21 @@ impl WalletMonitor {
         // Build token balances map
         let mut token_balances = HashMap::new();
         for token_account in token_accounts {
-            if let Ok(parsed_account) = serde_json::from_value::<spl_token::state::Account>(
-                token_account.account.data
-            ) {
-                let token_info = TokenAccountInfo {
-                    mint: parsed_account.mint.to_string(),
-                    amount: parsed_account.amount,
-                    decimals: 9, // Default to 9, would need to query mint for actual
-                    ui_amount: parsed_account.amount as f64 / 10f64.powi(9),
-                    owner: parsed_account.owner.to_string(),
-                };
-                
-                token_balances.insert(parsed_account.mint.to_string(), token_info);
+            // Parse token account data directly from bytes
+            if let solana_account_decoder::UiAccountData::Binary(data, _) = &token_account.account.data {
+                if let Ok(data_bytes) = base64::decode(&data) {
+                    if let Ok(parsed_account) = spl_token::state::Account::unpack(&data_bytes) {
+                        let token_info = TokenAccountInfo {
+                            mint: parsed_account.mint.to_string(),
+                            amount: parsed_account.amount,
+                            decimals: 9, // Default to 9, would need to query mint for actual
+                            ui_amount: parsed_account.amount as f64 / 10f64.powi(9),
+                            owner: parsed_account.owner.to_string(),
+                        };
+                        
+                        token_balances.insert(parsed_account.mint.to_string(), token_info);
+                    }
+                }
             }
         }
         

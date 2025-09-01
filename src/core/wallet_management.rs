@@ -25,8 +25,14 @@ pub enum WalletType {
     Cold,
 }
 
+impl Default for WalletType {
+    fn default() -> Self {
+        WalletType::Trading
+    }
+}
+
 /// Wallet configuration and metadata
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct WalletConfig {
     /// Wallet type (Trading or Cold)
     pub wallet_type: WalletType,
@@ -555,6 +561,30 @@ impl WalletManager {
                     Ok(balance)
                 }
             }
+        }
+    }
+}
+
+impl Clone for WalletManager {
+    fn clone(&self) -> Self {
+        let mut keypairs = HashMap::new();
+        // Clone all keypairs by recreating from bytes
+        for (wallet_type, keypair) in &self.keypairs {
+            if let Ok(cloned_keypair) = Keypair::from_bytes(&keypair.to_bytes()) {
+                keypairs.insert(wallet_type.clone(), cloned_keypair);
+            }
+        }
+        
+        Self {
+            config_dir: self.config_dir.clone(),
+            wallets: self.wallets.clone(),
+            keypairs,
+            rpc_client: RpcClient::new_with_commitment(
+                self.rpc_client.url(),
+                self.rpc_client.commitment()
+            ),
+            master_password: self.master_password.clone(),
+            encryption_salt: self.encryption_salt,
         }
     }
 }

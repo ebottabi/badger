@@ -55,16 +55,14 @@ pub struct ScanMetrics {
 #[derive(Debug)]
 pub struct TokenScanner {
     alert_bus: AlertBus,
-    db: BadgerDB,
 }
 
 impl TokenScanner {
     #[instrument]
-    pub async fn new(db: BadgerDB) -> Result<Self> {
-        info!("Initializing TokenScanner with database integration");
+    pub async fn new() -> Result<Self> {
+        info!("Initializing TokenScanner with memory-only storage");
         Ok(Self {
             alert_bus: AlertBus::new(),
-            db,
         })
     }
 
@@ -143,7 +141,7 @@ impl TokenScanner {
 
     #[instrument(skip(self))]
     pub async fn run(&self) -> Result<()> {
-        info!("TokenScanner: Starting new token mint detection with database integration");
+        info!("TokenScanner: Starting new token mint detection with memory-only storage");
         
         let mut counter = 0;
         // TODO: Monitor for new token creation events
@@ -153,29 +151,12 @@ impl TokenScanner {
             // Generate and log JSON token opportunities for EVERY scan in real-time
             let scanned_opportunities = self.generate_scanned_opportunities(counter);
             
-            // Store opportunities in database
-            for opportunity in &scanned_opportunities.opportunities_found {
-                let db_opportunity = TokenOpportunityRecord {
-                    id: None,
-                    mint_address: opportunity.mint_address.clone(),
-                    symbol: Some(opportunity.symbol.clone()),
-                    name: Some(opportunity.name.clone()),
-                    risk_score: Some(opportunity.risk_score),
-                    liquidity_sol: Some(opportunity.initial_liquidity_sol),
-                    market_cap_usd: Some(opportunity.market_cap_usd),
-                    creator_address: Some(opportunity.creator_address.clone()),
-                    discovered_at: Utc::now().timestamp(),
-                    source: opportunity.source.clone(),
-                    has_website: opportunity.metadata.has_website,
-                    has_social: opportunity.metadata.has_twitter || opportunity.metadata.has_telegram,
-                    mint_authority_renounced: opportunity.metadata.mint_authority_renounced,
-                    freeze_authority_renounced: opportunity.metadata.freeze_authority_renounced,
-                };
-
-                if let Err(e) = self.db.store_token_opportunity(db_opportunity).await {
-                    warn!(error = %e, mint_address = %opportunity.mint_address, "Failed to store token opportunity to database");
-                }
-            }
+            // Log opportunities (database removed - memory-only storage)
+            info!(
+                opportunities_count = scanned_opportunities.opportunities_found.len(),
+                scan_counter = counter,
+                "💾 Opportunities logged (database removed - using logs only)"
+            );
             
             match serde_json::to_string_pretty(&scanned_opportunities) {
                 Ok(json_data) => {
@@ -197,21 +178,8 @@ impl TokenScanner {
             if counter % 1000 == 0 {
                 info!(
                     counter = counter,
-                    "TokenScanner heartbeat - 1000 scans completed and stored"
+                    "TokenScanner heartbeat - 1000 scans completed (database removed - using logs only)"
                 );
-                
-                // Get database stats periodically
-                match self.db.get_database_stats().await {
-                    Ok(stats) => {
-                        info!(
-                            "Database stats: {} opportunities stored",
-                            stats.opportunities_count
-                        );
-                    }
-                    Err(e) => {
-                        warn!(error = %e, "Failed to get database stats");
-                    }
-                }
             }
             
             // No sleep - real-time scanning

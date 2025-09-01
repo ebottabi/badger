@@ -139,7 +139,7 @@ pub enum MarketEvent {
 }
 
 impl MarketEvent {
-    /// Generate unique event ID for database storage
+    /// Generate unique event ID for identification
     pub fn get_event_id(&self) -> String {
         match self {
             MarketEvent::PoolCreated { pool, .. } => {
@@ -163,7 +163,7 @@ impl MarketEvent {
         }
     }
 
-    /// Get event type string for database storage
+    /// Get event type string for classification
     pub fn get_event_type(&self) -> String {
         match self {
             MarketEvent::PoolCreated { .. } => "pool_created".to_string(),
@@ -175,7 +175,7 @@ impl MarketEvent {
         }
     }
 
-    /// Get timestamp for database storage
+    /// Get timestamp for event tracking
     pub fn get_timestamp(&self) -> i64 {
         match self {
             MarketEvent::PoolCreated { pool, .. } => pool.created_at.timestamp(),
@@ -236,7 +236,7 @@ pub enum TradingSignal {
 }
 
 impl TradingSignal {
-    /// Get unique signal ID for database storage
+    /// Get unique signal ID for identification
     pub fn get_signal_id(&self) -> String {
         match self {
             TradingSignal::Buy { token_mint, .. } => {
@@ -251,7 +251,7 @@ impl TradingSignal {
         }
     }
 
-    /// Get signal type for database storage
+    /// Get signal type for classification
     pub fn get_signal_type(&self) -> String {
         match self {
             TradingSignal::Buy { .. } => "buy".to_string(),
@@ -260,7 +260,7 @@ impl TradingSignal {
         }
     }
 
-    /// Get timestamp for database storage
+    /// Get timestamp for event tracking
     pub fn get_timestamp(&self) -> i64 {
         chrono::Utc::now().timestamp()
     }
@@ -298,6 +298,7 @@ pub enum SignalSource {
     NewPool,
     InsiderWallet,
     InsiderCopy,     // Copy trading from insider wallets
+    InsiderCopyTrade, // Copy trading signal from insider activity
     VolumeSpike,
     LiquidityAdd,
 }

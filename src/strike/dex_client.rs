@@ -8,7 +8,7 @@ use solana_sdk::{
     pubkey::Pubkey,
     transaction::Transaction,
     instruction::Instruction,
-    signature::{Signature, Keypair},
+    signature::{Signature, Keypair, Signer},
     commitment_config::CommitmentConfig,
 };
 use std::str::FromStr;
@@ -94,7 +94,7 @@ pub struct RouteInfo {
 }
 
 /// Jupiter API quote response structure
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct JupiterQuote {
     /// Input mint
@@ -124,7 +124,7 @@ pub struct JupiterQuote {
 }
 
 /// Platform fee structure
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PlatformFee {
     /// Fee amount
@@ -134,7 +134,7 @@ pub struct PlatformFee {
 }
 
 /// Route plan step
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RoutePlan {
     /// Swap information
@@ -144,7 +144,7 @@ pub struct RoutePlan {
 }
 
 /// Swap information for route step
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SwapInfo {
     /// AMM key
@@ -235,11 +235,11 @@ impl DexClient {
     /// 
     /// # Returns
     /// * `Result<SwapResult>` - Result of the swap operation
-    #[instrument(skip(self, wallet_keypair))]
+    #[instrument(skip(self, _wallet_keypair))]
     pub async fn execute_swap(
         &self,
         swap_request: &SwapRequest,
-        wallet_keypair: &Keypair,
+        _wallet_keypair: &Keypair,
     ) -> Result<SwapResult> {
         info!(
             input_mint = %swap_request.input_mint,
@@ -261,10 +261,10 @@ impl DexClient {
         );
         
         // Get swap transaction from Jupiter
-        let swap_transaction = self.jupiter_client.get_swap_transaction(&quote, wallet_keypair).await?;
+        let swap_transaction = self.jupiter_client.get_swap_transaction(&quote, _wallet_keypair).await?;
         
         // Execute the transaction
-        let signature = self.submit_transaction(&swap_transaction, wallet_keypair).await?;
+        let signature = self.submit_transaction(&swap_transaction, _wallet_keypair).await?;
         
         // Parse amounts from quote
         let input_amount = quote.in_amount.parse::<u64>()
@@ -308,11 +308,11 @@ impl DexClient {
     /// 
     /// # Returns
     /// * `Result<Signature>` - Transaction signature
-    #[instrument(skip(self, transaction, wallet_keypair))]
+    #[instrument(skip(self, transaction, _wallet_keypair))]
     async fn submit_transaction(
         &self,
         transaction: &Transaction,
-        wallet_keypair: &Keypair,
+        _wallet_keypair: &Keypair,
     ) -> Result<Signature> {
         let mut attempts = 0;
         let max_attempts = self.config.max_retries + 1;
@@ -489,11 +489,14 @@ impl JupiterClient {
     async fn get_quote(&self, swap_request: &SwapRequest) -> Result<JupiterQuote> {
         let url = format!("{}/quote", self.api_url);
         
+        let amount_str = swap_request.amount.to_string();
+        let slippage_str = swap_request.slippage_bps.to_string();
+        
         let mut params = HashMap::new();
         params.insert("inputMint", swap_request.input_mint.as_str());
         params.insert("outputMint", swap_request.output_mint.as_str());
-        params.insert("amount", &swap_request.amount.to_string());
-        params.insert("slippageBps", &swap_request.slippage_bps.to_string());
+        params.insert("amount", &amount_str);
+        params.insert("slippageBps", &slippage_str);
         
         debug!(url = %url, params = ?params, "Requesting quote from Jupiter");
         
@@ -531,20 +534,20 @@ impl JupiterClient {
     /// 
     /// # Returns
     /// * `Result<Transaction>` - Swap transaction ready for signing
-    #[instrument(skip(self, wallet_keypair))]
+    #[instrument(skip(self, _wallet_keypair))]
     async fn get_swap_transaction(
         &self,
         quote: &JupiterQuote,
-        wallet_keypair: &Keypair,
+        _wallet_keypair: &Keypair,
     ) -> Result<Transaction> {
         let url = format!("{}/swap", self.api_url);
         
         let request_body = serde_json::json!({
             "quoteResponse": quote,
-            "userPublicKey": wallet_keypair.pubkey().to_string(),
+            "userPublicKey": _wallet_keypair.pubkey().to_string(),
             "wrapAndUnwrapSol": true,
             "useSharedAccounts": true,
-            "feeAccount": null,
+            "feeAccount": serde_json::Value::Null,
             "dynamicComputeUnitLimit": true,
             "prioritizationFeeLamports": "auto"
         });
@@ -575,7 +578,7 @@ impl JupiterClient {
             .context("Failed to deserialize swap transaction")?;
         
         // Sign the transaction
-        transaction.partial_sign(&[wallet_keypair], transaction.message.recent_blockhash);
+        transaction.partial_sign(&[_wallet_keypair], transaction.message.recent_blockhash);
         
         debug!("Swap transaction prepared and signed");
         

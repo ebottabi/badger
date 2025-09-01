@@ -11,7 +11,7 @@ use std::fs;
 use std::path::Path;
 
 /// Wallet configuration for secure key management
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WalletConfig {
     /// Path to wallet keypair file (JSON format)
     pub keypair_path: Option<String>,
@@ -247,7 +247,7 @@ impl WalletManager {
         
         // Sign the transaction
         let mut transaction = signing_request.transaction;
-        let signature = transaction.signatures[0]; // Will be updated after signing
+        let _signature = transaction.signatures[0]; // Will be updated after signing
         
         transaction.partial_sign(&[&self.keypair], transaction.message.recent_blockhash);
         let actual_signature = transaction.signatures[0];
@@ -463,6 +463,17 @@ impl WalletStats {
             (self.transactions_requiring_approval as f64 / self.total_transactions as f64) * 100.0
         } else {
             0.0
+        }
+    }
+}
+
+impl Clone for WalletManager {
+    fn clone(&self) -> Self {
+        Self {
+            keypair: Keypair::from_bytes(&self.keypair.to_bytes()).unwrap(),
+            config: self.config.clone(),
+            transaction_history: self.transaction_history.clone(),
+            approval_callback: None, // Callbacks cannot be cloned - will need to be re-set if needed
         }
     }
 }
