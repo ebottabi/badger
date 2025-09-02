@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badger Bot Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#f8f9fa',
+                        secondary: '#e9ecef',
+                        accent: '#6c757d'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-primary min-h-screen">
+    <!-- Header -->
+    <header class="bg-white border-b border-secondary shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">B</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Badger Bot</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-sm text-gray-600">Active</span>
+                    </div>
+                    <button onclick="window.location.href='settings.html'" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                        Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Portfolio Overview -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg border border-secondary p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Portfolio Value</p>
+                        <p class="text-2xl font-bold text-gray-900">$1,247.83</p>
+                    </div>
+                    <div class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center">
+                        <span class="text-xl">💰</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center text-sm">
+                        <span class="text-green-600 font-medium">+12.5%</span>
+                        <span class="text-gray-600 ml-1">from yesterday</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg border border-secondary p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Active Positions</p>
+                        <p class="text-2xl font-bold text-gray-900">3</p>
+                    </div>
+                    <div class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center">
+                        <span class="text-xl">📊</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center text-sm">
+                        <span class="text-gray-600">2 winning, 1 holding</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg border border-secondary p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">24h P&L</p>
+                        <p class="text-2xl font-bold text-green-600">+$156.42</p>
+                    </div>
+                    <div class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center">
+                        <span class="text-xl">📈</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center text-sm">
+                        <span class="text-green-600 font-medium">+13.8%</span>
+                        <span class="text-gray-600 ml-1">return</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- P&L Chart Section -->
+        <div class="bg-white rounded-lg border border-secondary mb-8">
+            <div class="px-6 py-4 border-b border-secondary">
+                <h2 class="text-lg font-semibold text-gray-900">Profit & Loss</h2>
+            </div>
+            <div class="p-6">
+                <canvas id="pnlChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Current Positions -->
+            <div class="bg-white rounded-lg border border-secondary">
+                <div class="px-6 py-4 border-b border-secondary">
+                    <h2 class="text-lg font-semibold text-gray-900">Current Positions</h2>
+                </div>
+                <div class="p-6">
+                    <!-- Position 1 -->
+                    <div class="border border-secondary rounded-lg p-4 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Cpo7WEQr (TOKEN)</p>
+                                    <p class="text-sm text-gray-600">Entry: 0.000006 SOL</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-green-600">+16821.6%</p>
+                                <p class="text-sm text-gray-600">0.1h ago</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-secondary">
+                            <div>
+                                <p class="text-xs text-gray-600">Invested</p>
+                                <p class="text-sm font-medium">0.002 SOL ($0.45)</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-600">Current</p>
+                                <p class="text-sm font-medium">0.385 SOL ($76.05)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Position 2 -->
+                    <div class="border border-secondary rounded-lg p-4 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Bb9adZ5L (PUMP)</p>
+                                    <p class="text-sm text-gray-600">Entry: 0.000039 SOL</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-gray-600">+0.2%</p>
+                                <p class="text-sm text-gray-600">2.3h ago</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-secondary">
+                            <div>
+                                <p class="text-xs text-gray-600">Invested</p>
+                                <p class="text-sm font-medium">0.005 SOL ($1.20)</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-600">Current</p>
+                                <p class="text-sm font-medium">0.005 SOL ($1.22)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Position 3 -->
+                    <div class="border border-secondary rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <div>
+                                    <p class="font-medium text-gray-900">XyZ9abc1 (MEME)</p>
+                                    <p class="text-sm text-gray-600">Entry: 0.000012 SOL</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-red-600">-15.8%</p>
+                                <p class="text-sm text-gray-600">4.1h ago</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-secondary">
+                            <div>
+                                <p class="text-xs text-gray-600">Invested</p>
+                                <p class="text-sm font-medium">0.01 SOL ($2.40)</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-600">Current</p>
+                                <p class="text-sm font-medium">0.008 SOL ($2.02)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bot Controls & Activity -->
+            <div class="space-y-6">
+                <!-- Bot Controls -->
+                <div class="bg-white rounded-lg border border-secondary">
+                    <div class="px-6 py-4 border-b border-secondary">
+                        <h2 class="text-lg font-semibold text-gray-900">Bot Controls</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg transition-colors font-medium">
+                                Start Trading
+                            </button>
+                            <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg transition-colors font-medium">
+                                Stop Trading
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">SOL Amount per Trade</label>
+                                <input type="number" value="0.01" step="0.001" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Max Positions</label>
+                                <input type="number" value="5" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Stop Loss %</label>
+                                <input type="number" value="20" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg border border-secondary">
+                    <div class="px-6 py-4 border-b border-secondary">
+                        <h2 class="text-lg font-semibold text-gray-900">Recent Activity</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between py-2">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span class="text-sm text-gray-900">BUY Cpo7WEQr</span>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">0.002 SOL</p>
+                                    <p class="text-xs text-gray-500">2 min ago</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between py-2">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                                    <span class="text-sm text-gray-900">SELL XyZ9abc1</span>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">0.008 SOL</p>
+                                    <p class="text-xs text-gray-500">1h ago</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between py-2">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span class="text-sm text-gray-900">BUY Bb9adZ5L</span>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">0.005 SOL</p>
+                                    <p class="text-xs text-gray-500">2h ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // P&L Chart
+        const ctx = document.getElementById('pnlChart').getContext('2d');
+        const pnlChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+                datasets: [{
+                    label: 'Profit/Loss ($)',
+                    data: [0, +50, +120, +80, +200, +180, +250, +247, +300],
+                    borderColor: function(context) {
+                        const value = context.parsed.y;
+                        return value >= 0 ? '#10b981' : '#ef4444';
+                    },
+                    backgroundColor: function(context) {
+                        const value = context.parsed.y;
+                        return value >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+                    },
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: function(context) {
+                        const value = context.parsed.y;
+                        return value >= 0 ? '#10b981' : '#ef4444';
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: function(context) {
+                                if (context.tick.value === 0) {
+                                    return '#374151';
+                                }
+                                return '#e9ecef';
+                            }
+                        },
+                        ticks: {
+                            color: '#6c757d',
+                            callback: function(value) {
+                                if (value >= 0) {
+                                    return '+$' + value;
+                                } else {
+                                    return '-$' + Math.abs(value);
+                                }
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#e9ecef'
+                        },
+                        ticks: {
+                            color: '#6c757d'
+                        }
+                    }
+                },
+                elements: {
+                    point: {
+                        radius: 4,
+                        backgroundColor: '#10b981',
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }
+                }
+            }
+        });
+
+        // Auto-refresh chart data (simulation)
+        function updateChart() {
+            const now = new Date();
+            const timeLabel = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+            
+            // Simulate P&L change (can be positive or negative)
+            const lastValue = pnlChart.data.datasets[0].data[pnlChart.data.datasets[0].data.length - 1];
+            const change = (Math.random() - 0.4) * 100; // Slightly bias toward gains
+            const newValue = Math.max(-500, lastValue + change); // Don't go below -$500
+            
+            // Update chart
+            pnlChart.data.labels.push(timeLabel);
+            pnlChart.data.datasets[0].data.push(Math.round(newValue));
+            
+            // Keep only last 9 data points
+            if (pnlChart.data.labels.length > 9) {
+                pnlChart.data.labels.shift();
+                pnlChart.data.datasets[0].data.shift();
+            }
+            
+            // Update chart colors based on current P&L
+            pnlChart.data.datasets[0].borderColor = newValue >= 0 ? '#10b981' : '#ef4444';
+            pnlChart.data.datasets[0].backgroundColor = newValue >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+            
+            pnlChart.update();
+        }
+
+        // Update chart every 5 minutes (300000ms)
+        setInterval(updateChart, 300000);
+    </script>
+</body>
+</html>

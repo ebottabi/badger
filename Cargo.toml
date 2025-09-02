@@ -4,32 +4,17 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "badger"
-path = "src/main.rs"
+name = "pumpbot"
+path = "src/pumpbot_main.rs"
 
 [[bin]]
 name = "simple_export"
 path = "simple_export.rs"
 
 [[bin]]
-name = "pump_websocket"
-path = "src/bin/pump_websocket.rs"
+name = "momentum_trader"
+path = "src/bin/momentum_trader.rs"
 
-[[bin]]
-name = "pumpbot"
-path = "src/bin/pumpbot/main.rs"
-
-[[example]]
-name = "orchestrator_demo"
-path = "examples/orchestrator_demo.rs"
-
-[[example]]
-name = "portfolio_demo"
-path = "examples/portfolio_demo.rs"
-
-[[example]]
-name = "fund_manager_demo"
-path = "examples/fund_manager_demo.rs"
 
 [dependencies]
 # Core runtime and utilities
@@ -80,6 +65,9 @@ bincode = "1.3"
 
 # Random number generation
 rand = "0.8"
+
+# Configuration management  
+toml = "0.8"
 
 # Database dependencies removed - using memory-mapped files only
 

@@ -1,27 +1,15 @@
-// Core modules
-pub mod core;
+/// Badger Trading Bot Library
+/// 
+/// A comprehensive Solana meme coin trading system with momentum-based signals
 
-// Data ingestion modules  
-pub mod ingest;
+pub mod client;
+pub mod algo;
+pub mod util;
+pub mod config;
+pub mod execution;
+pub mod momentum;
 
-// Transport and communication modules
-pub mod transport;
-
-// Token scanning modules (Scout)
-pub mod scout;
-
-// Wallet monitoring modules (Stalker)  
-pub mod stalker;
-
-// Trade execution modules (Strike)
-pub mod strike;
-
-// Database modules removed - using memory-mapped files only
-
-// Handler modules for clean component management
-pub mod handlers;
-
-// Re-export commonly used types for convenience
-pub use core::*;
-pub use ingest::SolanaWebSocketClient;
-pub use transport::*;
+// Re-export common types for convenience
+pub use config::Config;
+pub use execution::{PositionManager, TradingClient, RiskManager, StrategyExecutor};
+pub use momentum::{MomentumSignalProcessor, MomentumTracker, VolumeMetrics};

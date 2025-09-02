@@ -1,0 +1,55 @@
+[strategy]
+total_capital_usd = 5.0
+target_multiplier = 50.0
+time_horizon_hours = 24
+allocation_strategy = "balanced_diversification"
+
+[allocation]
+main_position_percent = 100.0
+secondary_position_percent = 0.0
+reserve_percent = 0.0
+max_positions = 1
+
+[entry_criteria]
+# Momentum-based criteria (not new token criteria)
+min_volume_spike_percent = 200.0        # 200%+ volume increase in last hour
+min_price_momentum_percent = 15.0       # 15%+ price increase in momentum window  
+min_trade_count_hour = 50               # Minimum 50 trades in last hour
+min_unique_buyers_hour = 20             # At least 20 different buyers
+min_token_age_hours = 1                 # At least 1 hour old (proven survival)
+max_token_age_hours = 48                # Max 48 hours old (still early)
+min_market_cap_usd = 15000.0            # Higher minimum for established tokens
+max_market_cap_usd = 100000.0           # Room for 3-5x growth to graduation
+momentum_window_minutes = 60            # Look at 1-hour momentum windows
+
+[risk_management]
+max_loss_per_position_percent = 20.0
+trailing_stop_percent = 25.0
+max_loss_usd = 1.00
+profit_take_first_percent = 25.0
+profit_take_first_multiplier = 3.0
+profit_take_second_percent = 25.0
+profit_take_second_multiplier = 10.0
+profit_take_third_percent = 25.0
+profit_take_third_multiplier = 50.0
+final_target_multiplier = 100.0
+force_exit_hours = 48.0
+min_hold_minutes = 0.05
+momentum_exit_threshold = 20.0
+
+[trading]
+slippage_tolerance_percent = 10.0
+max_retry_attempts = 5
+execution_delay_ms = 100
+priority_fee_sol = 0.0001
+
+[wallet]
+public_key = "2wtnUPa5gkSmASYzC6FahcW6CHjc2Xt46tWF1uBGG72n"
+pump_api_key = "ah75mjv6adm6jwakcd276nbkd8vmew2qdxqnguje9xj4mduacx7mydv6d0r72cv5a53qmrur95c5jnjfah3k4juf956ncbv7enm6cdk3e556yh3tah1pgav18grmck1mdn14jtu7a4yku6hupjgb48x0jpyac6ht6cxb4948t62pxhne9nmexuhdtap8uvrarvqjhbd8dvkuf8"
+private_key = ""
+birdeye_api_key = ""
+
+[verification_links]
+dex_screener_base = "https://dexscreener.com/solana/"
+rug_check_base = "https://rugcheck.xyz/tokens/"
+pump_fun_base = "https://pump.fun/"

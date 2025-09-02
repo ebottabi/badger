@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badger Bot - Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#f8f9fa',
+                        secondary: '#e9ecef',
+                        accent: '#6c757d'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-primary min-h-screen">
+    <!-- Header -->
+    <header class="bg-white border-b border-secondary shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <button onclick="window.location.href='index.html'" class="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors">
+                        <span class="text-white font-bold text-sm">←</span>
+                    </button>
+                    <div class="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">B</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">Badger Bot - Settings</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-sm text-gray-600">Active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Trading Settings -->
+        <div class="bg-white rounded-lg border border-secondary mb-8">
+            <div class="px-6 py-4 border-b border-secondary">
+                <h2 class="text-lg font-semibold text-gray-900">Trading Settings</h2>
+                <p class="text-sm text-gray-600 mt-1">Configure your bot's trading behavior</p>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">SOL Amount per Trade</label>
+                        <input type="number" value="0.01" step="0.001" min="0.001" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Amount of SOL to invest per position</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Maximum Positions</label>
+                        <input type="number" value="5" min="1" max="20" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Maximum number of concurrent positions</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Stop Loss (%)</label>
+                        <input type="number" value="20" min="5" max="50" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Percentage loss to trigger stop loss</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Take Profit (%)</label>
+                        <input type="number" value="100" min="10" max="1000" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Percentage gain to trigger profit taking</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Hold Time (minutes)</label>
+                        <input type="number" value="60" min="1" max="1440" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Minimum time to hold positions</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Maximum Hold Time (hours)</label>
+                        <input type="number" value="24" min="1" max="168" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Maximum time to hold positions</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Market Cap ($)</label>
+                        <input type="number" value="6500" min="1000" step="500" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Only trade tokens with market cap above this threshold</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Management -->
+        <div class="bg-white rounded-lg border border-secondary mb-8">
+            <div class="px-6 py-4 border-b border-secondary">
+                <h2 class="text-lg font-semibold text-gray-900">Risk Management</h2>
+                <p class="text-sm text-gray-600 mt-1">Configure risk parameters and safety measures</p>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Daily Loss Limit ($)</label>
+                        <input type="number" value="50" min="10" step="10" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Stop trading after daily loss limit</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Emergency Stop Loss (%)</label>
+                        <input type="number" value="50" min="20" max="80" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Emergency exit threshold for positions</p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-3">
+                            <input type="checkbox" checked class="w-4 h-4 text-gray-600 border-secondary rounded focus:ring-gray-500">
+                            <span class="text-sm font-medium text-gray-700">Enable automatic trading</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1 ml-7">Allow bot to execute trades automatically</p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-3">
+                            <input type="checkbox" checked class="w-4 h-4 text-gray-600 border-secondary rounded focus:ring-gray-500">
+                            <span class="text-sm font-medium text-gray-700">Enable risk alerts</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1 ml-7">Send alerts for high-risk positions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monitor Settings -->
+        <div class="bg-white rounded-lg border border-secondary mb-8">
+            <div class="px-6 py-4 border-b border-secondary">
+                <h2 class="text-lg font-semibold text-gray-900">Monitor Settings</h2>
+                <p class="text-sm text-gray-600 mt-1">Configure monitoring and display preferences</p>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Position Check Interval (seconds)</label>
+                        <input type="number" value="30" min="5" max="300" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">How often to check position prices</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Portfolio Display Interval (minutes)</label>
+                        <input type="number" value="5" min="1" max="60" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">How often to show portfolio status</p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-3">
+                            <input type="checkbox" checked class="w-4 h-4 text-gray-600 border-secondary rounded focus:ring-gray-500">
+                            <span class="text-sm font-medium text-gray-700">Show detailed position info</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1 ml-7">Display detailed position updates with links</p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="flex items-center space-x-3">
+                            <input type="checkbox" class="w-4 h-4 text-gray-600 border-secondary rounded focus:ring-gray-500">
+                            <span class="text-sm font-medium text-gray-700">Enable sound alerts</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1 ml-7">Play sounds for important events</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Settings -->
+        <div class="bg-white rounded-lg border border-secondary mb-8">
+            <div class="px-6 py-4 border-b border-secondary">
+                <h2 class="text-lg font-semibold text-gray-900">API Settings</h2>
+                <p class="text-sm text-gray-600 mt-1">Configure API keys and endpoints</p>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Wallet Public Key</label>
+                        <input type="text" placeholder="Enter your wallet public key" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Your Solana wallet public key</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Pump.fun API Key</label>
+                        <input type="password" placeholder="Enter your Pump.fun API key" class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Required for trading operations</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">RPC Endpoint</label>
+                        <select class="w-full border border-secondary rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                            <option>Mainnet Beta (Default)</option>
+                            <option>QuickNode</option>
+                            <option>Helius</option>
+                            <option>Custom</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Solana RPC endpoint for blockchain access</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save/Cancel Buttons -->
+        <div class="flex justify-end space-x-4">
+            <button onclick="window.location.href='index.html'" class="px-6 py-2 border border-secondary text-gray-700 rounded-lg hover:bg-secondary transition-colors">
+                Cancel
+            </button>
+            <button class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                Save Settings
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Auto-save functionality (simulation)
+        function saveSettings() {
+            const settings = {
+                solAmount: document.querySelector('input[step="0.001"]').value,
+                maxPositions: document.querySelector('input[min="1"][max="20"]').value,
+                stopLoss: document.querySelector('input[min="5"][max="50"]').value,
+                // Add more settings as needed
+            };
+            
+            // Simulate saving to backend
+            console.log('Settings saved:', settings);
+            
+            // Show success message
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Saved!';
+            button.style.backgroundColor = '#10b981';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = '#374151';
+            }, 2000);
+        }
+        
+        // Add event listener to save button
+        document.querySelector('button:last-child').addEventListener('click', saveSettings);
+    </script>
+</body>
+</html>
